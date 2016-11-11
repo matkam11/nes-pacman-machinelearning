@@ -2,6 +2,16 @@ function printStatus(astring)
   gui.text(175,10, astring);
 end
 
+function printPause()
+  pauseStatus = memory.readbyte(74);
+  if ((pauseStatus % 2) == 1) then
+    gui.text(175,30, "Game Paused");
+    emu.message("Paused")
+  else 
+    gui.text(175,30, "Game Resumed");
+  end
+end
+
 function playerSelectStatus()
   playerSelect = memory.readbyte(71);
   astring = string.format("Player Select: %x", playerSelect);
@@ -17,6 +27,31 @@ function printSuperStatus()
   end
   gui.text(175,40, astring);
 end
+
+function printPlayerLives()
+  playerSelect = memory.readbyte(103);
+  astring = string.format("Player Lives: %x", playerSelect);
+  gui.text(175,50, astring);
+end
+
+function printPlayerPos()
+    xPos = memory.readbyte(26);
+    yPos = memory.readbyte(28);
+    gui.text(175,60, "Play Pos: (" .. xPos .. "," .. yPos .. ")");
+end
+
+function printPGhostPos()
+    xPos = memory.readbyte(34);
+    yPos = memory.readbyte(36);
+    gui.text(175,70, "PGho Pos: (" .. xPos .. "," .. yPos .. ")");
+end
+
+function printRGhostPos()
+    xPos = memory.readbyte(30);
+    yPos = memory.readbyte(32);
+    gui.text(175,80, "RGho Pos: (" .. xPos .. "," .. yPos .. ")");
+end
+
 
 function printDumpRam(startAdd, endAdd)
     printMem = startAdd;
@@ -82,11 +117,16 @@ end
 
 while (true) do
   status = gameStatus()
-  printDumpRam(365,428)
+  printDumpRam(74,75)
   if (status == 0) then
     playerSelectStatus()
   elseif (status == 1) then
     printSuperStatus()
+    printPause()
+    printPlayerLives()
+    printPlayerPos()
+    printPGhostPos()
+    printRGhostPos()
   end
   emu.frameadvance();
 end
@@ -109,10 +149,6 @@ if inGame then
 end
 while (false) do
     --gui.text(175,10, "In Loop");
-    xPos = memory.readbyte(26);
-    yPos = memory.readbyte(28);
-    keyPress = joypad.get(1)
-    --gui.text(175,170, "P Pos: (" .. xPos .. "," .. yPos .. ")");
     --gui.text(175,190, "Select Pressed: " .. keyset);
     --gui.text(175,190, "Select Pressed: " .. keyPress.select);
     --if ((a['right']) and (xPos ~= oldxPos)) then
