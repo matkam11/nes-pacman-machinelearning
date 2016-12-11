@@ -91,8 +91,7 @@ dataPath = "data_1.txt"
 labelsPath = "labels_1.txt"
 dataset={}
 dataset = get_data_and_labelsMULTILABEL(dataPath,labelsPath)
--- note that for furthur training we must add 1 to the labels to conform with
--- the net that has been trainned already
+
 setmetatable(dataset,
 				{__index = function(t, i)
 				return {t.data[i], t.label[i]}
@@ -104,7 +103,9 @@ setmetatable(dataset,
 function dataset:size()
     return self.data:size(1)
 end
-
+for i=1, 2993 do
+dataset.label[i]=dataset.label[i]+1
+end
 
 class_performance = {
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -124,5 +125,5 @@ for i=1,dataset:size()  do
 end
 
 for i=1, 64 do
-    print(i, class_performance[i] .. ' %')
+    print(i, class_performance[i]/dataset:size() .. ' %')
 end
