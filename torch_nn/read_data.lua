@@ -236,16 +236,14 @@ function dataset:size()
 end
 
 for i=1, 2993 do
-dataset[i][2]=tonumber(dataset[i][2])+1
+dataset.label[i]=dataset.label[i]+1
 
 print(dataset[i][2])
 end
 net = nn.Sequential()
 net:add(nn.Linear(169, 100)) 
 net:add(nn.ReLU())                       -- non-linearity 
-net:add(nn.Linear(100, 50))
-net:add(nn.ReLU())                       -- non-linearity 
-net:add(nn.Linear(50, 64))                   -- 10 is the number of outputs of
+net:add(nn.Linear(100, 64))                   -- 10 is the number of outputs of
 net:add(nn.LogSoftMax())                     -- converts the output to a
 --log-probability. Useful for classification problems
 
@@ -254,9 +252,12 @@ net:zeroGradParameters()
 
 criterion = nn.ClassNLLCriterion()
 trainer = nn.StochasticGradient(net, criterion)
-trainer.learningRate = 0.001
+trainer.learningRate = 0.01
 trainer.maxIteration = 5 -- just do 5 epochs of training.
 
+
 trainer:train(dataset)
+
+torch.save("nnparame.par", net)
 end
 
