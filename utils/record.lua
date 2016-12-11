@@ -6,7 +6,7 @@ Config = require('config')
 Fileops = require('Fileops')
 
 
-smb_savestate = savestate.create(1)
+smb_savestate = savestate.create(0)
 getInputs = Mario.getInputs
 displayBoard = Interface.displayBoard
 totalGameState = {}
