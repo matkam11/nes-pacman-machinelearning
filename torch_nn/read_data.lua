@@ -93,9 +93,7 @@ function load_file_to_labelsNEW(path)
   local file = io.open(path, 'r') -- open file
   for line in file:lines() do
       local int_table = {}
-      print(line)
       line:gsub(".",function(c) table.insert(int_table,tonumber(c)) end)
-      print(int_table)
       table.insert(input_table, torch.DoubleTensor(int_table))
   end
   file:close() --close file
