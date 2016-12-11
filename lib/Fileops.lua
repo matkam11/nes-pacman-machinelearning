@@ -1,6 +1,4 @@
 local Fileops = {}
-Interface.path  = "/home/agostini/Development/sness/nes-pacman-machinelearning/"
-Interface.datapath = Interface.path .. "Data/"
 function Fileops.write_current_state(data,filename)
     local file = io.open(Interface.datapath .. filename, "w")
 	for i = 1,169 do
@@ -61,7 +59,7 @@ end
 -- ####################################################################
 -- this function loads a file line by line to avoid having memory issues
 function Fileops.load_file_to_tensorNEW(path)
-
+  print(path)
   local input_table = {}
 
   local file = io.open(path, 'r') -- open file
