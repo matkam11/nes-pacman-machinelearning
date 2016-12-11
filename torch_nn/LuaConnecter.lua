@@ -410,9 +410,10 @@ end
 totalGameState = {}
 run = 0
 --net = torch.load('nnparame.par')
+-- net = torch.load('multilabel.par')
 bestNN = 1
 bestFitness = 0
-for n = 130,1000 do
+for n = 1,1000 do
 	print("Testing " .. n)
 	net = torch.load('/home/matkam11/School/nes-pacman-machinelearning/torch_nn/nn/multilabel ' .. n .. '.par')
 	initializeRun()
@@ -445,8 +446,8 @@ for n = 130,1000 do
 		-- 	print()
 		-- end
 
-		--print(type(indices[1]))
-		--press_keys(key_string_to_table(stringOut))
+		-- print(type(indices[1]))
+		-- press_keys(key_string_to_table(stringOut))
 		if playerStatus ~= 11 and playerStatus ~= 4  then
 	  		--gamestate = displayBoard()
 			--table.insert(totalGameState, gamestate)

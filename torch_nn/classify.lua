@@ -56,7 +56,7 @@ function load_file_to_tensor_with_type(path,thetype)
   local line_number = 1
   for line in file:lines() do
     input_table[line_number] = {}
-    for input in line:gmatch("%w+") do
+    for input in line:gmatch("-?[0-9]+") do
       table.insert(input_table[line_number], input)
     end
     -- increment the number of lines counter
@@ -105,7 +105,7 @@ function load_file_to_tensorNEW(path)
   local line_number = 1
   for line in file:lines() do
     input_table[line_number] = {}
-    for input in line:gmatch("%w+") do
+    for input in line:gmatch("-?[0-9]+") do
       table.insert(input_table[line_number], input)
     end
     -- increment the number of lines counter

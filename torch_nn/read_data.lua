@@ -16,7 +16,7 @@ function load_file_to_tensor(path)
   local line_number = 1
   for line in file:lines() do
     input_table[line_number] = {}
-    for input in line:gmatch("%w+") do
+    for input in line:gmatch("-?[0-9]+") do
       table.insert(input_table[line_number], input)
     end
     -- increment the number of lines counter
@@ -39,7 +39,7 @@ function load_file_to_tensorNEW(path)
   local line_number = 1
   for line in file:lines() do
     input_table[line_number] = {}
-    for input in line:gmatch("%w+") do
+    for input in line:gmatch("-?[0-9]+") do
       table.insert(input_table[line_number], input)
     end
     -- increment the number of lines counter
@@ -62,7 +62,7 @@ function load_file_to_tensor_with_type(path,thetype)
   local line_number = 1
   for line in file:lines() do
     input_table[line_number] = {}
-    for input in line:gmatch("%w+") do
+    for input in line:gmatch("-?[0-9]+") do
       table.insert(input_table[line_number], input)
     end
     -- increment the number of lines counter
@@ -260,14 +260,22 @@ if trainthis then
 
   trainthis = true
   if trainthis then
-    learning_rate_table = {0.1, 0.01, 0.001, 0.0001, 0.00001}
+    learning_rate_table = { 0.001, 0.0001, 0.00001}
     j = 1
     for number_of_training_sets = 1,10 do
       for number_of_learning_rate = 1,#learning_rate_table do
-        for nubmber_of_iterations = 1,20 do
+        for nubmber_of_iterations = 1,5 do
           mlp = nn.Sequential(); -- make a multi-layer perceptron
-          inputs = 169; outputs = 6; HUs = 5; -- parameters
+          inputs = 169; outputs = 6; HUs = 13; -- parameters
           mlp:add(nn.Linear(inputs, HUs))
+          mlp:add(nn.Sigmoid())
+          mlp:add(nn.Linear(HUs, HUs))
+          mlp:add(nn.Sigmoid())
+          mlp:add(nn.Linear(HUs, HUs))
+          mlp:add(nn.Sigmoid())
+          mlp:add(nn.Linear(HUs, HUs))
+          mlp:add(nn.Sigmoid())
+          mlp:add(nn.Linear(HUs, HUs))
           mlp:add(nn.Sigmoid())
           mlp:add(nn.Linear(HUs, HUs))
           mlp:add(nn.Sigmoid())
@@ -321,11 +329,11 @@ if trainthis then
 
     -- criterion = nn.MultiLabelMarginCriterion()
     -- trainer = nn.StochasticGradient(mlp, criterion)
-    
-    -- trainer.learningRate = 0.001
-    -- trainer.maxIteration = 5 -- just do 5 epochs of training.
 
-    -- for i = 1,10 do
+    -- trainer.learningRate = 0.001
+    -- trainer.maxIteration = 1 -- just do 5 epochs of training.
+
+    -- for i = 1,1 do
     --   dataPath = "../Data/data_2/data_" .. i .. ".txt"
     --   labelsPath = "../Data/data_2/labels_" .. i .. ".txt"
     --   dataset={}
