@@ -180,7 +180,7 @@ function get_data_and_labelsMULTILABEL(dataPath,labelsPath)
     mySet = {}
     local data=load_file_to_tensor_with_type(dataPath,"byte")
     local labels=load_file_to_labels_with_type(labelsPath, "byte")
-    mySet.data = data
+	mySet.data = data
     mySet.label = labels
     return mySet
 end
@@ -188,6 +188,9 @@ end
 
 
 -- #####################################################################
+trainthis = false 
+if trainthis then 
+
 -- Load the data
 dataPath = "data_1.txt"
 labelsPath = "labels_1.txt"
@@ -211,4 +214,49 @@ trainer.maxIteration = 10 -- just do 5 epochs of training.
 trainer:train(dataset)
 
 
+end
+
+trainthis = true
+if trainthis then
+dataPath = "data_1.txt"                                                         
+labelsPath = "labels_1.txt"                                                     
+dataset={}                                                                      
+dataset = get_data_and_labelsMULTILABEL(dataPath,labelsPath)
+
+setmetatable(dataset, 
+				{__index = function(t, i) 
+				return {t.data[i], t.label[i]} 
+				end}
+			);
+		dataset.data = dataset.data:double() -- convert the data from a ByteTensor to
+		-- a DoubleTensor.
+
+function dataset:size() 
+    return self.data:size(1) 
+end
+
+for i=1, 2993 do
+dataset[i][2]=tonumber(dataset[i][2])+1
+
+print(dataset[i][2])
+end
+net = nn.Sequential()
+net:add(nn.Linear(169, 100)) 
+net:add(nn.ReLU())                       -- non-linearity 
+net:add(nn.Linear(100, 50))
+net:add(nn.ReLU())                       -- non-linearity 
+net:add(nn.Linear(50, 64))                   -- 10 is the number of outputs of
+net:add(nn.LogSoftMax())                     -- converts the output to a
+--log-probability. Useful for classification problems
+
+print('Lenet5\n' .. net:__tostring());
+net:zeroGradParameters() 
+
+criterion = nn.ClassNLLCriterion()
+trainer = nn.StochasticGradient(net, criterion)
+trainer.learningRate = 0.001
+trainer.maxIteration = 5 -- just do 5 epochs of training.
+
+trainer:train(dataset)
+end
 
