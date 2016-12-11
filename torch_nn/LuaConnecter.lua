@@ -14,6 +14,7 @@ Config = require("config")
 active_nn = NeuralNets.Active
 net = torch.load( Interface.path .. 'torch_nn/' .. active_nn.meta.output_file)
 
+
 smb_savestate = savestate.create(1)
 getInputs = Mario.getInputs
 displayBoard = Interface.displayBoard
