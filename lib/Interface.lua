@@ -41,10 +41,10 @@ function Interface.displayBoard()
     board = getInputs()
     for i = 1,169 do
 		local opacity = 0xFF000000
-		if board[i] == 0 then
+		if board[i] == "0" then
 		    opacity = 0x00000000
 		    color = 0
-		elseif board[i] == 1 then
+		elseif board[i] == "1" then
             color = 100
 		else
             color = 255
