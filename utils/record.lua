@@ -1,7 +1,8 @@
-package.path = "../lib/?.lua;" .. package.path
+package.path = "../lib/?.lua;../config/?.lua;" .. package.path
 
 Mario = require('Mario')
 Interface = require('Interface')
+Config = require('config')
 Fileops = require('Fileops')
 
 

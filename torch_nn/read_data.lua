@@ -1,4 +1,4 @@
-package.path = "../lib/?.lua;" .. package.path
+package.path = "../lib/?.lua;../config/?.lua;" .. package.path
 torch = require "torch"
 ffi = require 'ffi'
 nn = require "nn"
@@ -6,6 +6,7 @@ nn = require "nn"
 
 Interface = require('Interface')
 Fileops = require('Fileops')
+Config = require('config')
 
 -- ####################################################################
 function getResizedVectorLine(inputTensorLine)
@@ -39,8 +40,8 @@ trainthis = false
 if trainthis then
 
   -- Load the data
-  dataPath = "data_1.txt"
-  labelsPath = "labels_1.txt"
+  dataPath = Interface.datapath .. "data_1.txt"
+  labelsPath = Interface.datapath .. "labels_1.txt"
   dataset={}
   dataset = Fileops.get_data_and_labelsNEW(dataPath,labelsPath)
 
@@ -64,8 +65,8 @@ end
 
 trainthis = false
 if trainthis then
-  dataPath = "data_1.txt"
-  labelsPath = "labels_1.txt"
+  dataPath = Interface.datapath .. "data_1.txt"
+  labelsPath = Interface.datapath .. "labels_1.txt"
   dataset={}
   dataset = Fileops.get_data_and_labelsMULTILABEL(dataPath,labelsPath)
 
@@ -131,8 +132,8 @@ if trainthis then
     trainer.maxIteration = 30 -- just do 5 epochs of training.
 
     -- Load the data
-    dataPath = "../Data/data_0.txt"
-    labelsPath = "../Data/labels_0.txt"
+    dataPath = Interface.datapath .. "data_0.txt"
+    labelsPath = Interface.datapath .. "labels_0.txt"
     dataset={}
     dataset = Fileops.get_data_and_labelsNEW(dataPath,labelsPath)
 
@@ -169,24 +170,24 @@ if trainthis then
     trainer.maxIteration = 5 -- just do 5 epochs of training.
 
     -- Load the data
-    dataPath = "../Data/data_2/data_1.txt"
-    labelsPath = "../Data/data_2/labels_1.txt"
+    dataPath = Interface.datapath .. "../Data/data_2/data_1.txt"
+    labelsPath = Interface.datapath .. "../Data/data_2/labels_1.txt"
     dataset={}
     dataset = Fileops.get_data_and_labelsMATRIX(dataPath,labelsPath)
 
     trainer:train(dataset)
 
     -- Load the data
-    dataPath = "../Data/data_2/data_0.txt"
-    labelsPath = "../Data/data_2/labels_0.txt"
+    dataPath = Interface.datapath .. "../Data/data_2/data_0.txt"
+    labelsPath = Interface.datapath .. "../Data/data_2/labels_0.txt"
     dataset={}
     dataset = Fileops.get_data_and_labelsMATRIX(dataPath,labelsPath)
 
     trainer:train(dataset)
 
     -- Load the data
-    dataPath = "../Data/data_2/data_2.txt"
-    labelsPath = "../Data/data_2/labels_2.txt"
+    dataPath = Interface.datapath .. "../Data/data_2/data_2.txt"
+    labelsPath = Interface.datapath .. "../Data/data_2/labels_2.txt"
     dataset={}
     dataset = Fileops.get_data_and_labelsMATRIX(dataPath,labelsPath)
 

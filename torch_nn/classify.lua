@@ -1,9 +1,10 @@
-package.path = "../lib/?.lua;" .. package.path
+package.path = "../lib/?.lua;../config/?.lua;" .. package.path
 torch = require "torch"
 ffi = require 'ffi'
 nn = require "nn"
 
 Interface = require('Interface')
+Config = require('config')
 Fileops = require('Fileops')
 -- ####################################################################
 function get_int_from_bin(line)
@@ -40,8 +41,8 @@ if false then
 
   --load data
   -- Load the data
-  dataPath = "data_1.txt"
-  labelsPath = "labels_1.txt"
+  dataPath = Interface.datapath .. "data_1.txt"
+  labelsPath = Interface.datapath .. "labels_1.txt"
   dataset={}
   dataset = Fileops.get_data_and_labelsMULTILABEL(dataPath,labelsPath)
 
@@ -92,8 +93,8 @@ if false then
 
     --load data
     -- Load the data
-    dataPath = "../Data/data_0.txt"
-    labelsPath = "../Data/labels_0.txt"
+    dataPath = Interface.datapath .. "data_0.txt"
+    labelsPath = Interface.datapath .. "labels_0.txt"
     dataset={}
     dataset = Fileops.get_data_and_labelsNEW(dataPath,labelsPath)
 
@@ -117,8 +118,8 @@ if false then
 
     --load data
     -- Load the data
-    dataPath = "../Data/data_2/data_1.txt"
-    labelsPath = "../Data/data_2/labels_1.txt"
+    dataPath = Interface.datapath .. "data_2/data_1.txt"
+    labelsPath = Interface.datapath .. "data_2/labels_1.txt"
     dataset={}
     dataset = Fileops.get_data_and_labelsMATRIX(dataPath,labelsPath)
 
