@@ -63,7 +63,7 @@ function Interface.displayBoard()
 	gameState['labels'] = controller
 	gameState['frame'] = board
 	return gameState
-end 
+end
 
 function Interface.key_table_to_table(input_key_table,thershold)
 	key_table = {}
@@ -90,10 +90,12 @@ function Interface.key_table_to_table_t_table(input_key_table,thershold)
 	for i = 1,6 do
 		if input_key_table[i] > thershold[i] then
 			key_table[Interface.ButtonNames[i]] = true
-			print("INPUT: ".. input_key_table[i] .. "\n\tTHERES " .. thershold[i].." T")
+			print(" INPUT: ".. input_key_table[i] .. " "
+				.. Interface.ButtonNames[i] .. "\n\tTHERS " .. thershold[i].." T")
 		else
 			key_table[Interface.ButtonNames[i]] = false
-			print("INPUT: ".. input_key_table[i] .. "\n\tTHERES " .. thershold[i].." F")
+			print("INPUT: ".. input_key_table[i] .. " "
+				.. Interface.ButtonNames[i]  .."\n\tTHERS " .. thershold[i].." F")
 		end
 	end
 	return key_table

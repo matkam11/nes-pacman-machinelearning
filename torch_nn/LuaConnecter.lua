@@ -12,13 +12,13 @@ nn = require "nn"
 
 net = torch.load( Interface.path .. 'torch_nn/multilabel.par')
 thershold = {
-	-- .64001,
-	0.971,
-	-0.18808802089208,
-	-0.25735338572036,
-	-0.046505756755972,
-	-0.01,
-	-10,
+	-- .61701,
+	0.60580, 						-- A
+	-0.18808802089208, 	-- B
+	-0.25735338572036, 	-- UP
+	-0.046505756755972, -- Down
+	0.50851015217468, 							-- left
+	-10, 								-- right
 }
 
 smb_savestate = savestate.create(1)
@@ -65,4 +65,3 @@ while true do
 		myframe  = myframe  +1
 	end
 end
-
