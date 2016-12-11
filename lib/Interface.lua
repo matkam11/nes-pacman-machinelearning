@@ -88,11 +88,12 @@ end
 function Interface.key_table_to_table_t_table(input_key_table,thershold)
 	key_table = {}
 	for i = 1,6 do
-		print(input_key_table[i] .. " > " .. thershold[i])
 		if input_key_table[i] > thershold[i] then
 			key_table[Interface.ButtonNames[i]] = true
+			print("INPUT: ".. input_key_table[i] .. "\n\tTHERES " .. thershold[i].." T")
 		else
 			key_table[Interface.ButtonNames[i]] = false
+			print("INPUT: ".. input_key_table[i] .. "\n\tTHERES " .. thershold[i].." F")
 		end
 	end
 	return key_table

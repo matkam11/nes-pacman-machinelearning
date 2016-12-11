@@ -9,16 +9,16 @@ torch = require "torch"
 ffi = require 'ffi'
 nn = require "nn"
 
-totalGameState = {}
-run = 0
+
 net = torch.load( Interface.path .. 'torch_nn/multilabel.par')
 thershold = {
-	.59551463,
-	.5,
-	.5,
-	.68,
-	.634,
-	.4551517,
+	-- .64001,
+	0.971,
+	-0.18808802089208,
+	-0.25735338572036,
+	-0.046505756755972,
+	-0.01,
+	-10,
 }
 
 smb_savestate = savestate.create(1)
@@ -32,6 +32,7 @@ while true do
 	fitness = curr_fitness
 	no_move = 0
 	myframe = 0
+	reset_count = 0
 	while true do
 		print('\n\n')
 	    displayBoard()
@@ -44,9 +45,16 @@ while true do
 			no_move = no_move + 1
 		end
 
-		if no_move > 200 then
-			no_move = 0
-			break
+		if no_move > 100 then
+
+			Interface.clearJoypad()
+			no_move=0
+			reset_count = reset_count+1
+			if reset_count >3 then
+				no_move = 0
+				reset_count = 0
+				break
+			end
 		end
 
 		if playerStatus == 11 and playerStatus == 4  then

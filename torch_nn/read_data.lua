@@ -109,17 +109,17 @@ if trainthis then
   if true then
 
     mlp = nn.Sequential(); -- make a multi-layer perceptron
-    inputs = 169; outputs = 6; HUs = 6; -- parameters
+    inputs = 169; outputs = 6; HUs = 2; -- parameters
     mlp:add(nn.Linear(inputs, HUs))
-    mlp:add(nn.Sigmoid())
+    mlp:add(nn.HardTanh())
     mlp:add(nn.Linear(HUs, HUs))
-    mlp:add(nn.Sigmoid())
+    mlp:add(nn.HardTanh())
     mlp:add(nn.Linear(HUs, HUs))
-    mlp:add(nn.Sigmoid())
+    mlp:add(nn.HardTanh())
     mlp:add(nn.Linear(HUs, HUs))
-    mlp:add(nn.Sigmoid())
+    mlp:add(nn.HardTanh())
     mlp:add(nn.Linear(HUs, outputs))
-    mlp:add(nn.Sigmoid())
+    mlp:add(nn.HardTanh())
 
 
     print('Lenet5\n' .. mlp:__tostring());
@@ -128,8 +128,8 @@ if trainthis then
 
     criterion = nn.MultiLabelMarginCriterion()
     trainer = nn.StochasticGradient(mlp, criterion)
-    trainer.learningRate = 0.0001
-    trainer.maxIteration = 30 -- just do 5 epochs of training.
+    trainer.learningRate = 0.001
+    trainer.maxIteration = 10 -- just do 5 epochs of training.
 
     -- Load the data
     dataPath = Interface.datapath .. "data_0.txt"
