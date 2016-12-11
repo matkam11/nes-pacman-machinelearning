@@ -22,7 +22,7 @@ function Fileops.write_full_game(data,filename)
     end
     file:close()
 
-    local file = io.open(Interface.path .. "labels_" .. filename, "w")
+    local file = io.open(Interface.datapath .. "labels_" .. filename, "w")
     lenOfData = table.getn(data)
     for f = 1,lenOfData do
     	currLabel = data[f]['labels']
