@@ -48,6 +48,18 @@ function load_file_to_tensorNEW(path)
   file:close() --close file
   -- intialize tensor for the file
   local file_tensor = torch.DoubleTensor(input_table)
+  local other_file_tensor = {}
+  for i=200,260 do
+  other_file_tensor[i] = torch.DoubleTensor(13,13):copy(file_tensor[i])
+  print(other_file_tensor[i])
+  --print(other_file_tensor[i][{{5,9},{5,9}}])
+  end
+  print(other_file_tensor[100][{{5,9},{5,9}}])
+  local resized_tensor = other_file_tensor[1][{{5,9},{5,9}}]
+  print(#resized_tensor)
+  -- 1 1 1 1 1 1 x 1 1 1 1 1 1
+  while true do
+  end
   return file_tensor
 end
 
@@ -266,11 +278,16 @@ if trainthis then
     mlp = nn.Sequential(); -- make a multi-layer perceptron
     inputs = 169; outputs = 6; HUs = 6; -- parameters
     mlp:add(nn.Linear(inputs, HUs))
+    mlp:add(nn.Sigmoid())
     mlp:add(nn.Linear(HUs, HUs))
+    mlp:add(nn.Sigmoid())
     mlp:add(nn.Linear(HUs, HUs))
+    mlp:add(nn.Sigmoid())
     mlp:add(nn.Linear(HUs, HUs))
+    mlp:add(nn.Sigmoid())
     mlp:add(nn.Linear(HUs, outputs))
     mlp:add(nn.Sigmoid())
+
 
     print('Lenet5\n' .. mlp:__tostring());
     mlp:zeroGradParameters() -- zero the internal gradient buffers of the network
