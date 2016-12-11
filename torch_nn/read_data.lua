@@ -1,56 +1,11 @@
+package.path = "../lib/?.lua;" .. package.path
 torch = require "torch"
 ffi = require 'ffi'
 nn = require "nn"
 
--- ####################################################################
--- Pre load functions to parse the file
 
--- ####################################################################
--- this function loads a file line by line to avoid having memory issues
-function load_file_to_tensor(path)
-
-  local input_table = {}
-
-  local file = io.open(path, 'r') -- open file
-  local max_line_size = 0
-  local line_number = 1
-  for line in file:lines() do
-    input_table[line_number] = {}
-    for input in line:gmatch("%w+") do
-      table.insert(input_table[line_number], input)
-    end
-    -- increment the number of lines counter
-    line_number = line_number +1
-  end
-  file:close() --close file
-  -- intialize tensor for the file
-  local file_tensor = torch.IntTensor(input_table)
-  return file_tensor
-end
-
--- ####################################################################
--- this function loads a file line by line to avoid having memory issues
-function load_file_to_tensorNEW(path)
-
-  local input_table = {}
-
-  local file = io.open(path, 'r') -- open file
-  local max_line_size = 0
-  local line_number = 1
-  for line in file:lines() do
-    input_table[line_number] = {}
-
-    for input in line:gmatch("-?[0-9]+") do
-      table.insert(input_table[line_number], input)
-    end
-    -- increment the number of lines counter
-    line_number = line_number +1
-  end
-  file:close() --close file
-  -- intialize tensor for the file
-  local file_tensor = torch.DoubleTensor(input_table)
-  return file_tensor
-end
+Interface = require('Interface')
+Fileops = require('Fileops')
 
 -- ####################################################################
 function getResizedVectorLine(inputTensorLine)
@@ -73,177 +28,10 @@ function getResizedVector(inputTensor)
   return vectorTensor
 end
 
-
--- ####################################################################
--- this function loads a file line by line to avoid having memory issues
-function load_file_to_tensorMATRIX(path)
-
-  local input_table = {}
-
-  local file = io.open(path, 'r') -- open file
-  local max_line_size = 0
-  local line_number = 1
-  for line in file:lines() do
-    input_table[line_number] = {}
-
-    for input in line:gmatch("-?[0-9]+") do
-      table.insert(input_table[line_number], input)
-    end
-    -- increment the number of lines counter
-    line_number = line_number +1
-  end
-  file:close() --close file
-  -- intialize tensor for the file
-  local file_tensor = torch.DoubleTensor(input_table)
-  return getResizedVector(file_tensor)
-end
-
--- ####################################################################
--- this function loads a file line by line to avoid having memory issues
-function load_file_to_tensor_with_type(path,thetype)
-
-  local input_table = {}
-
-  local file = io.open(path, 'r') -- open file
-  local max_line_size = 0
-  local line_number = 1
-  for line in file:lines() do
-    input_table[line_number] = {}
-    for input in line:gmatch("%w+") do
-      table.insert(input_table[line_number], input)
-    end
-    -- increment the number of lines counter
-    line_number = line_number +1
-  end
-  file:close() --close file
-  -- intialize tensor for the file
-  local file_tensor = {}
-  if thetype == "double" then
-    file_tensor = torch.DoubleTensor(input_table)
-
-  elseif thetype == "byte" then
-    file_tensor = torch.ByteTensor(input_table)
-  elseif thetype == "int" then
-    file_tensor = torch.IntTensor(input_table)
-  else
-    file_tensor = torch.IntTensor(input_table)
-  end
-
-  return file_tensor
-end
-
--- ####################################################################
-function load_file_to_labelsNEW(path)
-
-  local input_table = {}
-  local file = io.open(path, 'r') -- open file
-  for line in file:lines() do
-    local int_table = {}
-    line:gsub(".",function(c) table.insert(int_table,tonumber(c)) end)
-    for i = 1,#int_table do
-      int_table[i] = (int_table[i]*i)
-    end
-    table.insert(input_table, torch.DoubleTensor(int_table))
-  end
-  file:close() --close file
-
-  -- intialize tensor for the file
-  --local file_tensor = torch.IntTensor(input_table)
-  return input_table
-end
-
--- ####################################################################
-function load_file_to_labels_with_type(path,thetype)
-
-  local input_table = {}
-  local file = io.open(path, 'r') -- open file
-  for line in file:lines() do
-    table.insert(input_table, get_int_from_bin(line))
-
-  end
-  file:close() --close file
-
-  -- intialize tensor for the file
-
-  local file_tensor = {}
-  if thetype == "double" then
-    file_tensor = torch.DoubleTensor(input_table)
-
-  elseif thetype == "byte" then
-    file_tensor = torch.ByteTensor(input_table)
-  elseif thetype == "int" then
-    file_tensor = torch.IntTensor(input_table)
-  else
-    file_tensor = torch.IntTensor(input_table)
-  end
-
-  return file_tensor
-end
-
 -- ####################################################################
 function get_int_from_bin(line)
   number = tonumber(line:gsub(" " , ""),2)
   return number
-end
--- ####################################################################
-function load_file_to_labels(path)
-
-  local input_table = {}
-  local file = io.open(path, 'r') -- open file
-  for line in file:lines() do
-    table.insert(input_table, get_int_from_bin(line))
-
-  end
-  file:close() --close file
-
-  -- intialize tensor for the file
-  local file_tensor = torch.IntTensor(input_table)
-  return input_table
-end
-
--- ####################################################################
-function get_data_and_labels(dataPath,labelsPath)
-  mySet = {}
-  data=load_file_to_tensor(dataPath)
-  labels=load_file_to_labels(labelsPath)
-  mySet.data = data
-  mySet.label = labels
-
-  return mySet
-end
-
--- ####################################################################
-function get_data_and_labelsNEW(dataPath,labelsPath)
-  mySet = {}
-  local data=load_file_to_tensorNEW(dataPath)
-  function mySet:size() return (#data)[1] end
-  local labels=load_file_to_labelsNEW(labelsPath)
-  for i=1, mySet:size() do
-    mySet[i] = {data[i], labels[i]}
-  end
-  return mySet
-end
-
--- ####################################################################
-function get_data_and_labelsMATRIX(dataPath,labelsPath)
-  mySet = {}
-  local data=load_file_to_tensorMATRIX(dataPath)
-  function mySet:size() return (#data) end
-  local labels=load_file_to_labelsNEW(labelsPath)
-  for i=1, mySet:size() do
-    mySet[i] = {data[i], labels[i]}
-  end
-  return mySet
-end
-
--- ####################################################################
-function get_data_and_labelsMULTILABEL(dataPath,labelsPath)
-  mySet = {}
-  local data=load_file_to_tensor_with_type(dataPath,"byte")
-  local labels=load_file_to_labels_with_type(labelsPath, "byte")
-  mySet.data = data
-  mySet.label = labels
-  return mySet
 end
 
 -- #####################################################################
@@ -254,7 +42,7 @@ if trainthis then
   dataPath = "data_1.txt"
   labelsPath = "labels_1.txt"
   dataset={}
-  dataset = get_data_and_labelsNEW(dataPath,labelsPath)
+  dataset = Fileops.get_data_and_labelsNEW(dataPath,labelsPath)
 
   mlp = nn.Sequential(); -- make a multi-layer perceptron
   inputs = 169; outputs = 6; HUs = 45; -- parameters
@@ -279,7 +67,7 @@ if trainthis then
   dataPath = "data_1.txt"
   labelsPath = "labels_1.txt"
   dataset={}
-  dataset = get_data_and_labelsMULTILABEL(dataPath,labelsPath)
+  dataset = Fileops.get_data_and_labelsMULTILABEL(dataPath,labelsPath)
 
   setmetatable(dataset,
     {__index = function(t, i)
@@ -346,7 +134,7 @@ if trainthis then
     dataPath = "../Data/data_0.txt"
     labelsPath = "../Data/labels_0.txt"
     dataset={}
-    dataset = get_data_and_labelsNEW(dataPath,labelsPath)
+    dataset = Fileops.get_data_and_labelsNEW(dataPath,labelsPath)
 
     trainer:train(dataset)
 
@@ -384,7 +172,7 @@ if trainthis then
     dataPath = "../Data/data_2/data_1.txt"
     labelsPath = "../Data/data_2/labels_1.txt"
     dataset={}
-    dataset = get_data_and_labelsMATRIX(dataPath,labelsPath)
+    dataset = Fileops.get_data_and_labelsMATRIX(dataPath,labelsPath)
 
     trainer:train(dataset)
 
@@ -392,7 +180,7 @@ if trainthis then
     dataPath = "../Data/data_2/data_0.txt"
     labelsPath = "../Data/data_2/labels_0.txt"
     dataset={}
-    dataset = get_data_and_labelsMATRIX(dataPath,labelsPath)
+    dataset = Fileops.get_data_and_labelsMATRIX(dataPath,labelsPath)
 
     trainer:train(dataset)
 
@@ -400,7 +188,7 @@ if trainthis then
     dataPath = "../Data/data_2/data_2.txt"
     labelsPath = "../Data/data_2/labels_2.txt"
     dataset={}
-    dataset = get_data_and_labelsMATRIX(dataPath,labelsPath)
+    dataset = Fileops.get_data_and_labelsMATRIX(dataPath,labelsPath)
 
     trainer:train(dataset)
 
