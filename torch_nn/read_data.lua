@@ -16,7 +16,7 @@ function load_file_to_tensor(path)
   local line_number = 1
   for line in file:lines() do
     input_table[line_number] = {}
-    for input in line:gmatch("-?[0-9]+") do
+    for input in line:gmatch("%w+") do
       table.insert(input_table[line_number], input)
     end
     -- increment the number of lines counter
@@ -39,6 +39,7 @@ function load_file_to_tensorNEW(path)
   local line_number = 1
   for line in file:lines() do
     input_table[line_number] = {}
+
     for input in line:gmatch("-?[0-9]+") do
       table.insert(input_table[line_number], input)
     end
@@ -52,6 +53,52 @@ function load_file_to_tensorNEW(path)
 end
 
 -- ####################################################################
+function getResizedVectorLine(inputTensorLine)
+  local reshaped_file_tensor = {}
+  local resized_tensor = {}
+  local vectorTensor = {}
+    reshaped_file_tensor = torch.DoubleTensor(13,13):copy(inputTensorLine)
+    --print(reshaped_file_tensor[i][{{6,10},{6,13}}])
+    resized_tensor = reshaped_file_tensor[{{6,10},{6,13}}]
+    vectorTensorLine=torch.DoubleTensor(40):copy(resized_tensor)
+  return vectorTensorLine
+end
+
+-- ####################################################################
+function getResizedVector(inputTensor)
+  local vectorTensor = {}
+  for i=1,(#inputTensor)[1] do
+    vectorTensor[i]=getResizedVectorLine(inputTensor[i])
+  end
+  return vectorTensor
+end
+
+
+-- ####################################################################
+-- this function loads a file line by line to avoid having memory issues
+function load_file_to_tensorMATRIX(path)
+
+  local input_table = {}
+
+  local file = io.open(path, 'r') -- open file
+  local max_line_size = 0
+  local line_number = 1
+  for line in file:lines() do
+    input_table[line_number] = {}
+
+    for input in line:gmatch("-?[0-9]+") do
+      table.insert(input_table[line_number], input)
+    end
+    -- increment the number of lines counter
+    line_number = line_number +1
+  end
+  file:close() --close file
+  -- intialize tensor for the file
+  local file_tensor = torch.DoubleTensor(input_table)
+  return getResizedVector(file_tensor)
+end
+
+-- ####################################################################
 -- this function loads a file line by line to avoid having memory issues
 function load_file_to_tensor_with_type(path,thetype)
 
@@ -62,7 +109,7 @@ function load_file_to_tensor_with_type(path,thetype)
   local line_number = 1
   for line in file:lines() do
     input_table[line_number] = {}
-    for input in line:gmatch("-?[0-9]+") do
+    for input in line:gmatch("%w+") do
       table.insert(input_table[line_number], input)
     end
     -- increment the number of lines counter
@@ -178,6 +225,18 @@ function get_data_and_labelsNEW(dataPath,labelsPath)
 end
 
 -- ####################################################################
+function get_data_and_labelsMATRIX(dataPath,labelsPath)
+  mySet = {}
+  local data=load_file_to_tensorMATRIX(dataPath)
+  function mySet:size() return (#data) end
+  local labels=load_file_to_labelsNEW(labelsPath)
+  for i=1, mySet:size() do
+    mySet[i] = {data[i], labels[i]}
+  end
+  return mySet
+end
+
+-- ####################################################################
 function get_data_and_labelsMULTILABEL(dataPath,labelsPath)
   mySet = {}
   local data=load_file_to_tensor_with_type(dataPath,"byte")
@@ -258,89 +317,109 @@ if trainthis then
   end
 
 
-  trainthis = true
-  if trainthis then
-    learning_rate_table = { 0.001, 0.0001, 0.00001}
-    j = 1
-    for number_of_training_sets = 1,10 do
-      for number_of_learning_rate = 1,#learning_rate_table do
-        for nubmber_of_iterations = 1,5 do
-          mlp = nn.Sequential(); -- make a multi-layer perceptron
-          inputs = 169; outputs = 6; HUs = 13; -- parameters
-          mlp:add(nn.Linear(inputs, HUs))
-          mlp:add(nn.Sigmoid())
-          mlp:add(nn.Linear(HUs, HUs))
-          mlp:add(nn.Sigmoid())
-          mlp:add(nn.Linear(HUs, HUs))
-          mlp:add(nn.Sigmoid())
-          mlp:add(nn.Linear(HUs, HUs))
-          mlp:add(nn.Sigmoid())
-          mlp:add(nn.Linear(HUs, HUs))
-          mlp:add(nn.Sigmoid())
-          mlp:add(nn.Linear(HUs, HUs))
-          mlp:add(nn.Sigmoid())
-          mlp:add(nn.Linear(HUs, HUs))
-          mlp:add(nn.Sigmoid())
-          mlp:add(nn.Linear(HUs, HUs))
-          mlp:add(nn.Sigmoid())
-          mlp:add(nn.Linear(HUs, outputs))
-          mlp:add(nn.Sigmoid())
+  if false then
 
-          print('Lenet5\n' .. mlp:__tostring());
-          mlp:zeroGradParameters() -- zero the internal gradient buffers of the network
-          -- (will come to this later)
-
-          criterion = nn.MultiLabelMarginCriterion()
-          trainer = nn.StochasticGradient(mlp, criterion)
+    mlp = nn.Sequential(); -- make a multi-layer perceptron
+    inputs = 169; outputs = 6; HUs = 6; -- parameters
+    mlp:add(nn.Linear(inputs, HUs))
+    mlp:add(nn.Sigmoid())
+    mlp:add(nn.Linear(HUs, HUs))
+    mlp:add(nn.Sigmoid())
+    mlp:add(nn.Linear(HUs, HUs))
+    mlp:add(nn.Sigmoid())
+    mlp:add(nn.Linear(HUs, HUs))
+    mlp:add(nn.Sigmoid())
+    mlp:add(nn.Linear(HUs, outputs))
+    mlp:add(nn.Sigmoid())
 
 
-          trainer.learningRate = learning_rate_table[number_of_learning_rate]
-          trainer.maxIteration = nubmber_of_iterations -- just do 5 epochs of training.
-          for i = 1,number_of_training_sets do
-            dataPath = "../Data/data_2/data_" .. i .. ".txt"
-            labelsPath = "../Data/data_2/labels_" .. i .. ".txt"
-            dataset={}
-            dataset = get_data_and_labelsNEW(dataPath,labelsPath)
-            trainer:train(dataset)
-          end
+    print('Lenet5\n' .. mlp:__tostring());
+    mlp:zeroGradParameters() -- zero the internal gradient buffers of the network
+    -- (will come to this later)
 
-          torch.save("nn/multilabel " .. j ..".par", mlp)
-          j = j +1
-        end
-      end
-    end
+    criterion = nn.MultiLabelMarginCriterion()
+    trainer = nn.StochasticGradient(mlp, criterion)
+    trainer.learningRate = 0.0001
+    trainer.maxIteration = 5 -- just do 5 epochs of training.
 
-    -- mlp = nn.Sequential(); -- make a multi-layer perceptron
-    -- inputs = 169; outputs = 6; HUs = 5; -- parameters
-    -- mlp:add(nn.Linear(inputs, HUs))
-    -- mlp:add(nn.Sigmoid())
-    -- mlp:add(nn.Linear(HUs, HUs))
-    -- mlp:add(nn.Sigmoid())
-    -- mlp:add(nn.Linear(HUs, HUs))
-    -- mlp:add(nn.Sigmoid())
-    -- mlp:add(nn.Linear(HUs, HUs))
-    -- mlp:add(nn.Sigmoid())
-    -- mlp:add(nn.Linear(HUs, outputs))
-    -- mlp:add(nn.Sigmoid())
+    -- Load the data
+    dataPath = "../Data/data_2/data_1.txt"
+    labelsPath = "../Data/data_2/labels_1.txt"
+    dataset={}
+    dataset = get_data_and_labelsNEW(dataPath,labelsPath)
 
-    -- print('Lenet5\n' .. mlp:__tostring());
-    -- mlp:zeroGradParameters() -- zero the internal gradient buffers of the network
-    -- -- (will come to this later)
+    trainer:train(dataset)
 
-    -- criterion = nn.MultiLabelMarginCriterion()
-    -- trainer = nn.StochasticGradient(mlp, criterion)
+    -- Load the data
+    dataPath = "../Data/data_2/data_0.txt"
+    labelsPath = "../Data/data_2/labels_0.txt"
+    dataset={}
+    dataset = get_data_and_labelsNEW(dataPath,labelsPath)
 
-    -- trainer.learningRate = 0.001
-    -- trainer.maxIteration = 1 -- just do 5 epochs of training.
+    trainer:train(dataset)
 
-    -- for i = 1,1 do
-    --   dataPath = "../Data/data_2/data_" .. i .. ".txt"
-    --   labelsPath = "../Data/data_2/labels_" .. i .. ".txt"
-    --   dataset={}
-    --   dataset = get_data_and_labelsNEW(dataPath,labelsPath)
-    --   trainer:train(dataset)
-    -- end
+    -- Load the data
+    dataPath = "../Data/data_2/data_2.txt"
+    labelsPath = "../Data/data_2/labels_2.txt"
+    dataset={}
+    dataset = get_data_and_labelsNEW(dataPath,labelsPath)
 
-    -- torch.save("multilabel.par", mlp)
+    trainer:train(dataset)
+
+    torch.save("multilabel.par", mlp)
+
+  end
+
+
+  if true then
+
+    mlp = nn.Sequential(); -- make a multi-layer perceptron
+    inputs = 40; outputs = 6; HUs = 5; -- parameters
+    mlp:add(nn.Linear(inputs, HUs))
+    mlp:add(nn.Sigmoid())
+    mlp:add(nn.Linear(HUs, HUs))
+    mlp:add(nn.Sigmoid())
+    mlp:add(nn.Linear(HUs, HUs))
+    mlp:add(nn.Sigmoid())
+    mlp:add(nn.Linear(HUs, HUs))
+    mlp:add(nn.Sigmoid())
+    mlp:add(nn.Linear(HUs, outputs))
+    mlp:add(nn.Sigmoid())
+
+
+    print('Lenet5\n' .. mlp:__tostring());
+    mlp:zeroGradParameters() -- zero the internal gradient buffers of the network
+    -- (will come to this later)
+
+    criterion = nn.MultiLabelMarginCriterion()
+    trainer = nn.StochasticGradient(mlp, criterion)
+    trainer.learningRate = 0.001
+    trainer.maxIteration = 5 -- just do 5 epochs of training.
+
+    -- Load the data
+    dataPath = "../Data/data_2/data_1.txt"
+    labelsPath = "../Data/data_2/labels_1.txt"
+    dataset={}
+    dataset = get_data_and_labelsMATRIX(dataPath,labelsPath)
+
+    trainer:train(dataset)
+
+    -- Load the data
+    dataPath = "../Data/data_2/data_0.txt"
+    labelsPath = "../Data/data_2/labels_0.txt"
+    dataset={}
+    dataset = get_data_and_labelsMATRIX(dataPath,labelsPath)
+
+    trainer:train(dataset)
+
+    -- Load the data
+    dataPath = "../Data/data_2/data_2.txt"
+    labelsPath = "../Data/data_2/labels_2.txt"
+    dataset={}
+    dataset = get_data_and_labelsMATRIX(dataPath,labelsPath)
+
+    trainer:train(dataset)
+
+    torch.save("multilabel.par", mlp)
 
   end
