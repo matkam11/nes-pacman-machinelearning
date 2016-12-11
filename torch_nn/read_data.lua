@@ -260,51 +260,79 @@ if trainthis then
 
   trainthis = true
   if trainthis then
+    learning_rate_table = {0.1, 0.01, 0.001, 0.0001, 0.00001}
+    j = 1
+    for number_of_training_sets = 1,10 do
+      for number_of_learning_rate = 1,#learning_rate_table do
+        for nubmber_of_iterations = 1,20 do
+          mlp = nn.Sequential(); -- make a multi-layer perceptron
+          inputs = 169; outputs = 6; HUs = 5; -- parameters
+          mlp:add(nn.Linear(inputs, HUs))
+          mlp:add(nn.Sigmoid())
+          mlp:add(nn.Linear(HUs, HUs))
+          mlp:add(nn.Sigmoid())
+          mlp:add(nn.Linear(HUs, HUs))
+          mlp:add(nn.Sigmoid())
+          mlp:add(nn.Linear(HUs, HUs))
+          mlp:add(nn.Sigmoid())
+          mlp:add(nn.Linear(HUs, outputs))
+          mlp:add(nn.Sigmoid())
+
+          print('Lenet5\n' .. mlp:__tostring());
+          mlp:zeroGradParameters() -- zero the internal gradient buffers of the network
+          -- (will come to this later)
+
+          criterion = nn.MultiLabelMarginCriterion()
+          trainer = nn.StochasticGradient(mlp, criterion)
 
 
+          trainer.learningRate = learning_rate_table[number_of_learning_rate]
+          trainer.maxIteration = nubmber_of_iterations -- just do 5 epochs of training.
+          for i = 1,number_of_training_sets do
+            dataPath = "../Data/data_2/data_" .. i .. ".txt"
+            labelsPath = "../Data/data_2/labels_" .. i .. ".txt"
+            dataset={}
+            dataset = get_data_and_labelsNEW(dataPath,labelsPath)
+            trainer:train(dataset)
+          end
 
-    mlp = nn.Sequential(); -- make a multi-layer perceptron
-    inputs = 169; outputs = 6; HUs = 6; -- parameters
-    mlp:add(nn.Linear(inputs, HUs))
-    mlp:add(nn.Linear(HUs, HUs))
-    mlp:add(nn.Linear(HUs, HUs))
-    mlp:add(nn.Linear(HUs, HUs))
-    mlp:add(nn.Linear(HUs, outputs))
-    mlp:add(nn.Sigmoid())
+          torch.save("nn/multilabel " .. j ..".par", mlp)
+          j = j +1
+        end
+      end
+    end
 
-    print('Lenet5\n' .. mlp:__tostring());
-    mlp:zeroGradParameters() -- zero the internal gradient buffers of the network
-    -- (will come to this later)
+    -- mlp = nn.Sequential(); -- make a multi-layer perceptron
+    -- inputs = 169; outputs = 6; HUs = 5; -- parameters
+    -- mlp:add(nn.Linear(inputs, HUs))
+    -- mlp:add(nn.Sigmoid())
+    -- mlp:add(nn.Linear(HUs, HUs))
+    -- mlp:add(nn.Sigmoid())
+    -- mlp:add(nn.Linear(HUs, HUs))
+    -- mlp:add(nn.Sigmoid())
+    -- mlp:add(nn.Linear(HUs, HUs))
+    -- mlp:add(nn.Sigmoid())
+    -- mlp:add(nn.Linear(HUs, outputs))
+    -- mlp:add(nn.Sigmoid())
 
-    criterion = nn.MultiLabelMarginCriterion()
-    trainer = nn.StochasticGradient(mlp, criterion)
-    trainer.learningRate = 0.0001
-    trainer.maxIteration = 5 -- just do 5 epochs of training.
+    -- print('Lenet5\n' .. mlp:__tostring());
+    -- mlp:zeroGradParameters() -- zero the internal gradient buffers of the network
+    -- -- (will come to this later)
 
-    -- Load the data
-    dataPath = "../Data/data_2/data_1.txt"
-    labelsPath = "../Data/data_2/labels_1.txt"
-    dataset={}
-    dataset = get_data_and_labelsNEW(dataPath,labelsPath)
+    -- criterion = nn.MultiLabelMarginCriterion()
+    -- trainer = nn.StochasticGradient(mlp, criterion)
+    
+    -- trainer.learningRate = 0.001
+    -- trainer.maxIteration = 5 -- just do 5 epochs of training.
 
-    trainer:train(dataset)
+    -- for i = 1,10 do
+    --   dataPath = "../Data/data_2/data_" .. i .. ".txt"
+    --   labelsPath = "../Data/data_2/labels_" .. i .. ".txt"
+    --   dataset={}
+    --   dataset = get_data_and_labelsNEW(dataPath,labelsPath)
+    --   trainer:train(dataset)
+    -- end
 
-    -- Load the data
-    dataPath = "../Data/data_2/data_0.txt"
-    labelsPath = "../Data/data_2/labels_0.txt"
-    dataset={}
-    dataset = get_data_and_labelsNEW(dataPath,labelsPath)
-
-    trainer:train(dataset)
-
-    -- Load the data
-    dataPath = "../Data/data_2/data_2.txt"
-    labelsPath = "../Data/data_2/labels_2.txt"
-    dataset={}
-    dataset = get_data_and_labelsNEW(dataPath,labelsPath)
-
-    trainer:train(dataset)
-
-    torch.save("multilabel.par", mlp)
+    -- torch.save("multilabel.par", mlp)
 
   end

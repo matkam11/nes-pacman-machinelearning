@@ -110,16 +110,6 @@ function getInputs()
 			end
 		end
 	end
-	-- for i = 1,#inputs do
-	-- 	if inputs[i] == 1 then
-	-- 		inputs[i] = 1
-	-- 	elseif inputs[i] == 0 then
-	-- 		inputs[i] = 0
-	-- 	else
-	-- 		inputs[i] = -1
-	-- 	end
-	-- 	print(inputs[i])
-	-- end
 	--mariovx = memory.read_s8(0x7B)
 	--mariovy = memory.read_s8(0x7D)
 	
@@ -323,6 +313,11 @@ function playTop()
 	return
 end
 
+function curr_fitness()
+	gui.drawtext(223, 80, memory.readbyte(0x6D) * 0x100 + memory.readbyte(0x86), color)
+	return memory.readbyte(0x6D) * 0x100 + memory.readbyte(0x86)
+end
+
 function writeData(data,filename)
     local file = io.open(filename, "w")
     -- lenOfData = table.getn(data)
@@ -415,35 +410,62 @@ end
 totalGameState = {}
 run = 0
 --net = torch.load('nnparame.par')
-net = torch.load('multilabel.par')
+bestNN = 1
+bestFitness = 0
+for n = 130,1000 do
+	print("Testing " .. n)
+	net = torch.load('/home/matkam11/School/nes-pacman-machinelearning/torch_nn/nn/multilabel ' .. n .. '.par')
+	initializeRun()
+	fitness = curr_fitness
+	no_move = 0
+	myframe = 0
+	while true do
+	    displayBoard()
+		playerStatus = memory.readbyte(0x000E)
+		--print(displayBoard()['frame'])
+		prediction = net:forward(torch.DoubleTensor(displayBoard()['frame']))
+		--print(prediction)
+		press_keys(key_table_to_table(prediction,.5))
+		old_fitness = fitness
+		fitness = curr_fitness()
+		if old_fitness == fitness then
+			no_move = no_move + 1
+		end
 
-initializeRun()
-while true do
-    displayBoard()
-	playerStatus = memory.readbyte(0x000E)
-	--print(displayBoard()['frame'])
-	prediction = net:forward(torch.DoubleTensor(displayBoard()['frame']))
-	print(prediction)
-	press_keys(key_table_to_table(prediction,.5))
+		if no_move > 100 then
+			no_move = 0
+			break
+		end
 
-	-- local confidences, indices = torch.sort(prediction, true)
-	-- print(indices)
-	-- print(indices[1] == 3)
-	-- print(indices[1] == 4)
-	-- for i = 1,#indices do
-	-- 	print()
-	-- end
+		-- local confidences, indices = torch.sort(prediction, true)
+		-- print(indices)
+		-- print(indices[1] == 3)
+		-- print(indices[1] == 4)
+		-- for i = 1,#indices do
+		-- 	print()
+		-- end
 
-	--print(type(indices[1]))
-	--press_keys(key_string_to_table(stringOut))
-	if playerStatus ~= 11 and playerStatus ~= 4  then
-  		--gamestate = displayBoard()
-		--table.insert(totalGameState, gamestate)
-    else
-    	--writeData(totalGameState, run .. ".txt")
-    	--totalGameState = {}
-    	run = run + 1
-    	initializeRun()
+		--print(type(indices[1]))
+		--press_keys(key_string_to_table(stringOut))
+		if playerStatus ~= 11 and playerStatus ~= 4  then
+	  		--gamestate = displayBoard()
+			--table.insert(totalGameState, gamestate)
+	    else
+	    	--writeData(totalGameState, run .. ".txt")
+	    	--totalGameState = {}
+	    	run = run + 1
+	    	--initializeRun()
+	    	break
+		end
+		emu.frameadvance()
+		myframe  = myframe  +1
 	end
-	emu.frameadvance()
+	if fitness > bestFitness then
+		bestFitness = fitness
+		bestNN = n
+		print(myframe )
+		print("Found new Best! NN: " .. n .. " Fitness: " .. fitness )
+	end
 end
+print(bestNN)
+print(bestFitness)
