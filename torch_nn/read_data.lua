@@ -93,6 +93,9 @@ function load_file_to_labelsNEW(path)
   for line in file:lines() do
     local int_table = {}
     line:gsub(".",function(c) table.insert(int_table,tonumber(c)) end)
+    for i = 1,#int_table do
+      int_table[i] = (int_table[i]*i)
+    end
     table.insert(input_table, torch.DoubleTensor(int_table))
   end
   file:close() --close file
@@ -261,16 +264,13 @@ if trainthis then
 
 
     mlp = nn.Sequential(); -- make a multi-layer perceptron
-    inputs = 169; outputs = 6; HUs = 45; -- parameters
+    inputs = 169; outputs = 6; HUs = 6; -- parameters
     mlp:add(nn.Linear(inputs, HUs))
-    mlp:add(nn.Tanh())
     mlp:add(nn.Linear(HUs, HUs))
-    mlp:add(nn.Tanh())
     mlp:add(nn.Linear(HUs, HUs))
-    mlp:add(nn.Tanh())
     mlp:add(nn.Linear(HUs, HUs))
-    mlp:add(nn.Tanh())
     mlp:add(nn.Linear(HUs, outputs))
+    mlp:add(nn.Sigmoid())
 
     print('Lenet5\n' .. mlp:__tostring());
     mlp:zeroGradParameters() -- zero the internal gradient buffers of the network
@@ -278,7 +278,7 @@ if trainthis then
 
     criterion = nn.MultiLabelMarginCriterion()
     trainer = nn.StochasticGradient(mlp, criterion)
-    trainer.learningRate = 0.001
+    trainer.learningRate = 0.0001
     trainer.maxIteration = 5 -- just do 5 epochs of training.
 
     -- Load the data
