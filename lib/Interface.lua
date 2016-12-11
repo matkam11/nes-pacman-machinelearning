@@ -9,10 +9,12 @@ Interface.ButtonNames = {
 	"right",
 }
 
+Interface.Outputs = #Interface.ButtonNames
+
 function Interface.clearJoypad()
 	controller = {}
-	for b = 1,#ButtonNames do
-		controller[ButtonNames[b]] = false
+	for b = 1,#Interface.ButtonNames do
+		controller[Interface.ButtonNames[b]] = false
 	end
 	joypad.set(1,controller)
 end
@@ -25,7 +27,7 @@ end
 
 function Interface.displayBoard()
 	local controller = joypad.get(1)
-	for o = 1,Outputs do
+	for o = 1,Interface.Outputs do
 		local color
 		if controller[Interface.ButtonNames[o]] then
 			color = 0xFF0000FF

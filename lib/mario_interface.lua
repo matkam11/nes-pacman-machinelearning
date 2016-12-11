@@ -66,7 +66,7 @@ function Mario.getInputs()
 		for dx=-Mario.BoxRadius*16,Mario.BoxRadius*16,16 do
 			inputs[#inputs+1] = 0
 			
-			tile = getTile(dx, dy)
+			tile = Mario.getTile(dx, dy)
 			if tile == 1 and marioY+dy < 0x1B0 then
 				inputs[#inputs] = 1
 			end
@@ -93,7 +93,7 @@ function Mario.curr_fitness()
 	gui.drawtext(223, 80, xpos, color)
 	score = score + xpos
 	playerStatus = memory.readbyte(0x000E)
-	if playerStatus = 11 or playerStatus = 4  then
+	if playerStatus == 11 or playerStatus == 4  then
 		score = score - 1000
 	end
 	return score

@@ -1,5 +1,5 @@
 local Fileops = {}
-Interface.path  = "/home/matkam11/School/nes-pacman-machinelearning/"
+Interface.path  = "/home/matkam11/ML/"
 Interface.datapath = Interface.path .. "Data/"
 function Fileops.write_current_state(data,filename)
     local file = io.open(Interface.datapath .. filename, "w")
@@ -11,6 +11,7 @@ function Fileops.write_current_state(data,filename)
 end
 
 function Fileops.write_full_game(data,filename)
+    print(Interface.datapath)
     local file = io.open(Interface.datapath .. "data_" .. filename, "w")
     lenOfData = table.getn(data)
     for f = 1,lenOfData do
