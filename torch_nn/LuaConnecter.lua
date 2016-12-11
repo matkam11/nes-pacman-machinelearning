@@ -10,17 +10,22 @@ torch = require "torch"
 ffi = require 'ffi'
 nn = require "nn"
 
+NeuralNets = require("NeuralNets")
 
-net = torch.load( Interface.path .. 'torch_nn/multilabel.par')
+active_nn = NeuralNets.First
+net = torch.load( Interface.path .. 'torch_nn/' .. active_nn.meta.output_file)
+
 thershold = {
 	-- .61701,
-	0.872220, 						-- A
+	0.5, 						-- A
 	0.50851015217468, 	-- B
 	0.50, 	-- UP
 	0.5, -- Down
-	0.60, 							-- left
-	0.40, 								-- right
+	0.70, 							-- left
+	-1, 								-- right
 }
+
+
 
 smb_savestate = savestate.create(1)
 getInputs = Mario.getInputs
@@ -39,11 +44,11 @@ while true do
 	    displayBoard()
 		playerStatus = memory.readbyte(0x000E)
 		--prediction = net:forward(torch.DoubleTensor(displayBoard()['frame']))
-		local slice = {{6,10},{6,13}}
 		prediction = net:forward(
 				Datamanipulation.getResizedVectorLine(
 							torch.DoubleTensor(displayBoard()['frame'])
-							,slice)
+							,active_nn.meta.input_slice
+							,active_nn.meta.inputs)
 						)
 		Interface.press_keys(Interface.key_table_to_table_t_table(prediction,thershold))
 		old_fitness = fitness
