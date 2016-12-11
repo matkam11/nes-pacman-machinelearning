@@ -1,3 +1,5 @@
+Datamanipulation=require("Datamanipulation")
+
 local Fileops = {}
 function Fileops.write_current_state(data,filename)
     local file = io.open(Interface.datapath .. filename, "w")
@@ -97,7 +99,7 @@ function Fileops.load_file_to_labels(path)
 end
 -- ####################################################################
 -- this function loads a file line by line to avoid having memory issues
-function Fileops.load_file_to_tensorMATRIX(path)
+function Fileops.load_file_to_tensorMATRIX(path,slice)
   local input_table = {}
 
   local file = io.open(path, 'r') -- open file
@@ -115,7 +117,7 @@ function Fileops.load_file_to_tensorMATRIX(path)
   file:close() --close file
   -- intialize tensor for the file
   local file_tensor = torch.DoubleTensor(input_table)
-  return getResizedVector(file_tensor)
+  return Datamanipulation.getResizedVector(file_tensor,slice)
 end
 
 -- ####################################################################
@@ -224,9 +226,9 @@ function Fileops.get_data_and_labelsNEW(dataPath,labelsPath)
 end
 
 -- ####################################################################
-function Fileops.get_data_and_labelsMATRIX(dataPath,labelsPath)
+function Fileops.get_data_and_labelsMATRIX(dataPath,labelsPath,slice)
   mySet = {}
-  local data=Fileops.load_file_to_tensorMATRIX(dataPath)
+  local data=Fileops.load_file_to_tensorMATRIX(dataPath,slice)
   function mySet:size() return (#data) end
   local labels=Fileops.load_file_to_labelsNEW(labelsPath)
   for i=1, mySet:size() do

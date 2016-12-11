@@ -8,32 +8,6 @@ Interface = require('Interface')
 Fileops = require('Fileops')
 Config = require('config')
 
--- ####################################################################
-function getResizedVectorLine(inputTensorLine)
-  local reshaped_file_tensor = {}
-  local resized_tensor = {}
-  local vectorTensor = {}
-    reshaped_file_tensor = torch.DoubleTensor(13,13):copy(inputTensorLine)
-    --print(reshaped_file_tensor[i][{{6,10},{6,13}}])
-    resized_tensor = reshaped_file_tensor[{{6,10},{6,13}}]
-    vectorTensorLine=torch.DoubleTensor(40):copy(resized_tensor)
-  return vectorTensorLine
-end
-
--- ####################################################################
-function getResizedVector(inputTensor)
-  local vectorTensor = {}
-  for i=1,(#inputTensor)[1] do
-    vectorTensor[i]=getResizedVectorLine(inputTensor[i])
-  end
-  return vectorTensor
-end
-
--- ####################################################################
-function get_int_from_bin(line)
-  number = tonumber(line:gsub(" " , ""),2)
-  return number
-end
 
 -- #####################################################################
 trainthis = false
@@ -106,7 +80,7 @@ if trainthis then
   end
 
 
-  if true then
+  if false then
 
     mlp = nn.Sequential(); -- make a multi-layer perceptron
     inputs = 169; outputs = 6; HUs = 2; -- parameters
@@ -128,16 +102,58 @@ if trainthis then
 
     criterion = nn.MultiLabelMarginCriterion()
     trainer = nn.StochasticGradient(mlp, criterion)
-    trainer.learningRate = 0.001
+    trainer.learningRate = 0.01
     trainer.maxIteration = 10 -- just do 5 epochs of training.
 
     -- Load the data
-    dataPath = Interface.datapath .. "data_0.txt"
-    labelsPath = Interface.datapath .. "labels_0.txt"
-    dataset={}
-    dataset = Fileops.get_data_and_labelsNEW(dataPath,labelsPath)
+    for i = 0, 0 do
+      dataPath = Interface.datapath .. "data_"..i..".txt"
+      labelsPath = Interface.datapath .. "labels_"..i..".txt"
+      dataset={}
+      dataset = Fileops.get_data_and_labelsNEW(dataPath,labelsPath)
+      trainer:train(dataset)
+    end
 
-    trainer:train(dataset)
+
+    torch.save("multilabel.par", mlp)
+
+  end
+
+  if true then
+
+    mlp = nn.Sequential(); -- make a multi-layer perceptron
+    inputs = 40; outputs = 6; HUs = 2; -- parameters
+    mlp:add(nn.Linear(inputs, HUs))
+    mlp:add(nn.SoftSign())
+    mlp:add(nn.Linear(HUs, HUs))
+    mlp:add(nn.SoftSign())
+    mlp:add(nn.Linear(HUs, HUs))
+    mlp:add(nn.SoftSign())
+    mlp:add(nn.Linear(HUs, HUs))
+    mlp:add(nn.SoftSign())
+    mlp:add(nn.Linear(HUs, outputs))
+    mlp:add(nn.Sigmoid())
+
+
+    print('Lenet5\n' .. mlp:__tostring());
+    mlp:zeroGradParameters() -- zero the internal gradient buffers of the network
+    -- (will come to this later)
+
+    criterion = nn.MultiLabelMarginCriterion()
+    trainer = nn.StochasticGradient(mlp, criterion)
+    trainer.learningRate = 0.01
+    trainer.maxIteration = 10 -- just do 5 epochs of training.
+
+    -- Load the data
+    for i = 0, 0 do
+      dataPath = Interface.datapath .. "data_"..i..".txt"
+      labelsPath = Interface.datapath .. "labels_"..i..".txt"
+      dataset={}
+      local slice = {{6,10},{6,13}}
+      dataset = Fileops.get_data_and_labelsMATRIX(dataPath,labelsPath,slice)
+      trainer:train(dataset)
+    end
+
 
     torch.save("multilabel.par", mlp)
 
