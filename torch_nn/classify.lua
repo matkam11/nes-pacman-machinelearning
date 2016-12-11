@@ -128,6 +128,63 @@ function get_data_and_labelsNEW(dataPath,labelsPath)
   return mySet
 end
 
+-- ####################################################################
+function getResizedVectorLine(inputTensorLine)
+  local reshaped_file_tensor = {}
+  local resized_tensor = {}
+  local vectorTensor = {}
+    reshaped_file_tensor = torch.DoubleTensor(13,13):copy(inputTensorLine)
+    --print(reshaped_file_tensor[i][{{6,10},{6,13}}])
+    resized_tensor = reshaped_file_tensor[{{6,10},{6,13}}]
+    vectorTensorLine=torch.DoubleTensor(40):copy(resized_tensor)
+  return vectorTensorLine
+end
+
+-- ####################################################################
+function getResizedVector(inputTensor)
+  local vectorTensor = {}
+  for i=1,(#inputTensor)[1] do
+    vectorTensor[i]=getResizedVectorLine(inputTensor[i])
+  end
+  return vectorTensor
+end
+
+-- ####################################################################
+-- this function loads a file line by line to avoid having memory issues
+function load_file_to_tensorMATRIX(path)
+
+  local input_table = {}
+
+  local file = io.open(path, 'r') -- open file
+  local max_line_size = 0
+  local line_number = 1
+  for line in file:lines() do
+    input_table[line_number] = {}
+
+    for input in line:gmatch("-?[0-9]+") do
+      table.insert(input_table[line_number], input)
+    end
+    -- increment the number of lines counter
+    line_number = line_number +1
+  end
+  file:close() --close file
+  -- intialize tensor for the file
+  local file_tensor = torch.DoubleTensor(input_table)
+  return getResizedVector(file_tensor)
+end
+
+-- ####################################################################
+function get_data_and_labelsMATRIX(dataPath,labelsPath)
+  mySet = {}
+  local data=load_file_to_tensorMATRIX(dataPath)
+  function mySet:size() return (#data) end
+  local labels=load_file_to_labelsNEW(labelsPath)
+  for i=1, mySet:size() do
+    mySet[i] = {data[i], labels[i]}
+  end
+  return mySet
+end
+
 -- ----------------------------------------------------------------
 
 if false then
@@ -182,7 +239,7 @@ if false then
 
   end
 
-  if true then
+  if false then
     -- Load NN objsect
     net = torch.load('multilabel.par')
 
@@ -195,6 +252,31 @@ if false then
 
     for i=1,#dataset do
       prediction = net:forward(dataset[i][1])
+      print(prediction)
+    end
+
+  -- this is the order in which the buttos are on the labels file
+  classes = {'A', 'B', 'Down', 'Left',
+    'Right', 'Up'}
+  --print(classes[dataset[2][2]])
+
+
+  end
+
+
+  if true then
+    -- Load NN objsect
+    net = torch.load('multilabel.par')
+
+    --load data
+    -- Load the data
+    dataPath = "../Data/data_2/data_1.txt"
+    labelsPath = "../Data/data_2/labels_1.txt"
+    dataset={}
+    dataset = get_data_and_labelsMATRIX(dataPath,labelsPath)
+
+    for i=1,#dataset do -- BREAKING HERE
+      prediction = net:forward((getResizedVectorLine(dataset[i][1])))
       print(prediction)
     end
 

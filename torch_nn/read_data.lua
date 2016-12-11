@@ -51,15 +51,24 @@ function load_file_to_tensorNEW(path)
   local file_tensor = torch.DoubleTensor(input_table)
   return file_tensor
 end
-function getResizedVector(inputTensor)
+
+-- ####################################################################
+function getResizedVectorLine(inputTensorLine)
   local reshaped_file_tensor = {}
   local resized_tensor = {}
   local vectorTensor = {}
-  for i=1,2993 do
-    reshaped_file_tensor[i] = torch.DoubleTensor(13,13):copy(inputTensor[i])
+    reshaped_file_tensor = torch.DoubleTensor(13,13):copy(inputTensorLine)
     --print(reshaped_file_tensor[i][{{6,10},{6,13}}])
-    resized_tensor[i] = reshaped_file_tensor[i][{{6,10},{6,13}}]
-    vectorTensor[i]=torch.DoubleTensor(40):copy(resized_tensor[i])
+    resized_tensor = reshaped_file_tensor[{{6,10},{6,13}}]
+    vectorTensorLine=torch.DoubleTensor(40):copy(resized_tensor)
+  return vectorTensorLine
+end
+
+-- ####################################################################
+function getResizedVector(inputTensor)
+  local vectorTensor = {}
+  for i=1,(#inputTensor)[1] do
+    vectorTensor[i]=getResizedVectorLine(inputTensor[i])
   end
   return vectorTensor
 end
@@ -88,7 +97,6 @@ function load_file_to_tensorMATRIX(path)
   local file_tensor = torch.DoubleTensor(input_table)
   return getResizedVector(file_tensor)
 end
-load_file_to_tensorMATRIX("../Data/data_2/data_1.txt")
 
 -- ####################################################################
 -- this function loads a file line by line to avoid having memory issues
@@ -220,7 +228,6 @@ end
 function get_data_and_labelsMATRIX(dataPath,labelsPath)
   mySet = {}
   local data=load_file_to_tensorMATRIX(dataPath)
-  print((#data))
   function mySet:size() return (#data) end
   local labels=load_file_to_labelsNEW(labelsPath)
   for i=1, mySet:size() do
