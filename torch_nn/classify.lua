@@ -239,14 +239,14 @@ if false then
 
   end
 
-  if false then
+  if true then
     -- Load NN objsect
     net = torch.load('multilabel.par')
 
     --load data
     -- Load the data
-    dataPath = "../Data/data_2/data_1.txt"
-    labelsPath = "../Data/data_2/labels_1.txt"
+    dataPath = "../Data/data_0.txt"
+    labelsPath = "../Data/labels_0.txt"
     dataset={}
     dataset = get_data_and_labelsNEW(dataPath,labelsPath)
 
@@ -264,7 +264,7 @@ if false then
   end
 
 
-  if true then
+  if false then
     -- Load NN objsect
     net = torch.load('multilabel.par')
 

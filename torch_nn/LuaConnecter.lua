@@ -94,18 +94,18 @@ function getInputs()
 	
 	for dy=-BoxRadius*16,BoxRadius*16,16 do
 		for dx=-BoxRadius*16,BoxRadius*16,16 do
-			inputs[#inputs+1] = 0
+			inputs[#inputs+1] = "0"
 			
 			tile = getTile(dx, dy)
 			if tile == 1 and marioY+dy < 0x1B0 then
-				inputs[#inputs] = 1
+				inputs[#inputs] = "1"
 			end
 			
 			for i = 1,#sprites do
 				distx = math.abs(sprites[i]["x"] - (marioX+dx))
 				disty = math.abs(sprites[i]["y"] - (marioY+dy))
 				if distx <= 8 and disty <= 8 then
-					inputs[#inputs] = -1
+					inputs[#inputs] = "-1"
 				end
 			end
 		end
@@ -153,10 +153,10 @@ function displayBoard()
     board = getInputs()
     for i = 1,169 do
 		local opacity = 0xFF000000
-		if board[i] == 0 then
+		if board[i] == "0" then
 		    opacity = 0x00000000
 		    color = 0
-		elseif board[i] == 1 then
+		elseif board[i] == "1" then
             color = 100
 		else
             color = 255
@@ -364,13 +364,14 @@ end
 function key_table_to_table(input_key_table,thershold)
 	key_table = {}
 	local button_names = {
-		"A",
-		"B",
-		"down",
-		"left",
 		"right",
-		"up"
+		"left",
+		"down",
+		"up",
+		"B",
+		"A",
 	}
+
 	for i = 1,5 do
 		if input_key_table[i] > thershold then
 			key_table[button_names[i]] = true
@@ -381,16 +382,39 @@ function key_table_to_table(input_key_table,thershold)
 	return key_table
 end
 
+function key_table_to_table_t_table(input_key_table,thershold)
+	key_table = {}
+	local button_names = ButtonNames
+
+	-- local button_names = {
+	-- 	"right",
+	-- 	"left",
+	-- 	"down",
+	-- 	"up",
+	-- 	"B",
+	-- 	"A",
+	-- }
+
+	for i = 2,6 do
+		print(input_key_table[i] .. " > " .. thershold[i])
+		if input_key_table[i] > thershold[i] then
+			key_table[button_names[i]] = true
+		else
+			key_table[button_names[i]] = false
+		end
+	end
+	print(input_key_table[1] .. " < " .. thershold[1])
+	if input_key_table[1] > thershold[1] then
+			key_table[button_names[1]] = false
+		else
+			key_table[button_names[1]] = true
+		end
+	return key_table
+end
+
 function key_string_to_table(key_string)
 	local key_table = {}
-	local button_names = {
-		"A",
-		"B",
-		"down",
-		"left",
-		"right",
-		"up"
-	}
+	local button_names = ButtonNames
 	j = 1
 	for i in string.gmatch(key_string,"%S") do
 		if i == "1" then
@@ -411,11 +435,35 @@ totalGameState = {}
 run = 0
 --net = torch.load('nnparame.par')
 -- net = torch.load('multilabel.par')
-bestNN = 1
-bestFitness = 0
-for n = 1,1000 do
-	print("Testing " .. n)
-	net = torch.load('/home/matkam11/School/nes-pacman-machinelearning/torch_nn/nn/multilabel ' .. n .. '.par')
+net = torch.load('/home/matkam11/School/nes-pacman-machinelearning/torch_nn/multilabel.par')
+
+-- bestNN = 1
+-- bestFitness = 0
+-- for n = 1,1000 do
+-- 	print("Testing " .. n)
+-- 	net = torch.load('/home/matkam11/School/nes-pacman-machinelearning/torch_nn/nn/multilabel ' .. n .. '.par')
+thershold = {
+	-- .64001,
+	.6711809,
+	.5,
+	.5,
+	.68,
+	.634,
+	.4551517,
+}
+
+-- thershold = {
+-- 	-- .64001,
+-- 	.640008,
+-- 	.5,
+-- 	.5,
+-- 	.68,
+-- 	.521,
+-- 	.37,
+-- 	-- .3768239
+-- }
+
+	while true do
 	initializeRun()
 	fitness = curr_fitness
 	no_move = 0
@@ -425,15 +473,16 @@ for n = 1,1000 do
 		playerStatus = memory.readbyte(0x000E)
 		--print(displayBoard()['frame'])
 		prediction = net:forward(torch.DoubleTensor(displayBoard()['frame']))
-		--print(prediction)
-		press_keys(key_table_to_table(prediction,.5))
+		print(prediction)
+		--press_keys(key_table_to_table(prediction,.5))
+		press_keys(key_table_to_table_t_table(prediction,thershold))
 		old_fitness = fitness
 		fitness = curr_fitness()
 		if old_fitness == fitness then
 			no_move = no_move + 1
 		end
 
-		if no_move > 100 then
+		if no_move > 200 then
 			no_move = 0
 			break
 		end
@@ -455,18 +504,18 @@ for n = 1,1000 do
 	    	--writeData(totalGameState, run .. ".txt")
 	    	--totalGameState = {}
 	    	run = run + 1
-	    	--initializeRun()
 	    	break
 		end
 		emu.frameadvance()
 		myframe  = myframe  +1
 	end
-	if fitness > bestFitness then
-		bestFitness = fitness
-		bestNN = n
-		print(myframe )
-		print("Found new Best! NN: " .. n .. " Fitness: " .. fitness )
-	end
 end
-print(bestNN)
-print(bestFitness)
+-- 	if fitness > bestFitness then
+-- 		bestFitness = fitness
+-- 		bestNN = n
+-- 		print(myframe )
+-- 		print("Found new Best! NN: " .. n .. " Fitness: " .. fitness )
+-- 	end
+-- end
+-- print(bestNN)
+-- print(bestFitness)

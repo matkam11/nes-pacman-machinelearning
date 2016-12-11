@@ -317,7 +317,7 @@ if trainthis then
   end
 
 
-  if false then
+  if true then
 
     mlp = nn.Sequential(); -- make a multi-layer perceptron
     inputs = 169; outputs = 6; HUs = 6; -- parameters
@@ -340,27 +340,11 @@ if trainthis then
     criterion = nn.MultiLabelMarginCriterion()
     trainer = nn.StochasticGradient(mlp, criterion)
     trainer.learningRate = 0.0001
-    trainer.maxIteration = 5 -- just do 5 epochs of training.
+    trainer.maxIteration = 30 -- just do 5 epochs of training.
 
     -- Load the data
-    dataPath = "../Data/data_2/data_1.txt"
-    labelsPath = "../Data/data_2/labels_1.txt"
-    dataset={}
-    dataset = get_data_and_labelsNEW(dataPath,labelsPath)
-
-    trainer:train(dataset)
-
-    -- Load the data
-    dataPath = "../Data/data_2/data_0.txt"
-    labelsPath = "../Data/data_2/labels_0.txt"
-    dataset={}
-    dataset = get_data_and_labelsNEW(dataPath,labelsPath)
-
-    trainer:train(dataset)
-
-    -- Load the data
-    dataPath = "../Data/data_2/data_2.txt"
-    labelsPath = "../Data/data_2/labels_2.txt"
+    dataPath = "../Data/data_0.txt"
+    labelsPath = "../Data/labels_0.txt"
     dataset={}
     dataset = get_data_and_labelsNEW(dataPath,labelsPath)
 
@@ -371,7 +355,7 @@ if trainthis then
   end
 
 
-  if true then
+  if false then
 
     mlp = nn.Sequential(); -- make a multi-layer perceptron
     inputs = 40; outputs = 6; HUs = 5; -- parameters
