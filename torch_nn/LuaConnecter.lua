@@ -14,18 +14,6 @@ Config = require("config")
 active_nn = NeuralNets.Active
 net = torch.load( Interface.path .. 'torch_nn/' .. active_nn.meta.output_file)
 
-thershold = {
-	-- .61701,
-	0.424974, 						-- A
-	0.67, 	-- B
-	0.50, 	-- UP
-	0.5, -- Down
-	0.70, 							-- left
-	-1, 								-- right
-}
-
-
-
 smb_savestate = savestate.create(1)
 getInputs = Mario.getInputs
 displayBoard = Interface.displayBoard
@@ -49,7 +37,7 @@ while true do
 							,active_nn.meta.input_slice
 							,active_nn.meta.inputs)
 						)
-		Interface.press_keys(Interface.key_table_to_table_t_table(prediction,thershold))
+		Interface.press_keys(Interface.key_table_to_table_t_table(prediction,active_nn.meta.thershold))
 		old_fitness = fitness
 		fitness = Mario.curr_fitness()
 		if old_fitness == fitness then

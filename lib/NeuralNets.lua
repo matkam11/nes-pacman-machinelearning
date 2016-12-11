@@ -14,6 +14,15 @@ NeuralNet_Def.meta.inputs = inputs
 NeuralNet_Def.meta.input_slice = input_slice
 NeuralNet_Def.meta.outputs = outputs
 NeuralNet_Def.meta.output_file = "NN_first.par"
+NeuralNet_Def.meta.threshold = {
+	0.424974,	-- A
+	0.67, 		-- B
+	0.50, 		-- UP
+	0.5, 		-- Down
+	0.70, 		-- left
+	-1, 		-- right
+	}
+
 
 NeuralNet_Def.net_def = nn.Sequential()
 NeuralNet_Def.net_def:add(nn.Linear(inputs, HUs))
