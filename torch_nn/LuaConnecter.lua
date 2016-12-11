@@ -382,6 +382,16 @@ function key_table_to_table(input_key_table,thershold)
 	return key_table
 end
 
+thershold = {
+	-- .64001,
+	0.971,
+	-0.18808802089208,
+	-0.25735338572036,
+	-0.046505756755972,
+	-0.01,
+	-10,
+}
+
 function key_table_to_table_t_table(input_key_table,thershold)
 	key_table = {}
 	local button_names = ButtonNames
@@ -396,11 +406,12 @@ function key_table_to_table_t_table(input_key_table,thershold)
 	-- }
 
 	for i = 1,6 do
-		print(input_key_table[i] .. " > " .. thershold[i])
 		if input_key_table[i] > thershold[i] then
 			key_table[button_names[i]] = true
+			print("INPUT: ".. input_key_table[i] .. "\n\tTHERS " .. thershold[i].." T")
 		else
 			key_table[button_names[i]] = false
+			print("INPUT: ".. input_key_table[i] .. "\n\tTHERS " .. thershold[i].." F")
 		end
 	end
 	return key_table
@@ -436,15 +447,7 @@ net = torch.load('/home/agostini/Development/sness/nes-pacman-machinelearning/to
 -- for n = 1,1000 do
 -- 	print("Testing " .. n)
 -- 	net = torch.load('/home/agostini/Development/sness/nes-pacman-machinelearning/torch_nn/nn/multilabel ' .. n .. '.par')
-thershold = {
-	-- .64001,
-	-0.18808802089208,
-	.5,
-	.5,
-	.68,
-	-.0,
-	-0.04939249969286,
-}
+
 
 -- thershold = {
 -- 	-- .64001,
@@ -462,6 +465,7 @@ thershold = {
 	fitness = curr_fitness
 	no_move = 0
 	myframe = 0
+	reset_count = 0
 	while true do
 	    displayBoard()
 		playerStatus = memory.readbyte(0x000E)
@@ -476,9 +480,16 @@ thershold = {
 			no_move = no_move + 1
 		end
 
-		if no_move > 200 then
-			no_move = 0
-			break
+		if no_move > 100 then
+
+			clearJoypad()
+			no_move=0
+			reset_count = reset_count+1
+			if reset_count >3 then
+				no_move = 0
+				reset_count = 0
+				break
+			end
 		end
 
 		-- local confidences, indices = torch.sort(prediction, true)
