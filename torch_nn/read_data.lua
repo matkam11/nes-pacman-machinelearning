@@ -6,11 +6,11 @@ nn = require "nn"
 
 Interface = require('Interface')
 Fileops = require('Fileops')
-Config = require('config')
 NeuralNets = require('NeuralNets')
+Config = require('config')
 
 -- ####################################################################
-active_nn = NeuralNets.First
+active_nn = NeuralNets.Active
 
 print('Lenet5\n' .. active_nn.net_def:__tostring());
 active_nn.net_def:zeroGradParameters() -- zero the internal gradient buffers of the network

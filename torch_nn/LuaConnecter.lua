@@ -2,7 +2,6 @@ package.path = "../lib/?.lua;../config/?.lua;" .. package.path
 
 Interface = require('Interface')
 Mario = require('Mario')
-Config = require('config')
 Fileops = require('Fileops')
 Datamanipulation=require("Datamanipulation")
 
@@ -11,14 +10,14 @@ ffi = require 'ffi'
 nn = require "nn"
 
 NeuralNets = require("NeuralNets")
-
-active_nn = NeuralNets.First
+Config = require("config")
+active_nn = NeuralNets.Active
 net = torch.load( Interface.path .. 'torch_nn/' .. active_nn.meta.output_file)
 
 thershold = {
 	-- .61701,
-	0.5, 						-- A
-	0.50851015217468, 	-- B
+	0.424974, 						-- A
+	0.67, 	-- B
 	0.50, 	-- UP
 	0.5, -- Down
 	0.70, 							-- left

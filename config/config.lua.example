@@ -5,3 +5,7 @@ Interface.datapath = Interface.path .. "Data/"
 Interface.libpath = Interface.path .. "lib/"
 Interface.configpath = Interface.path .. "config/"
 
+-- Edit following line to set an "Acitve" Nerual net.
+-- The value is just the variable of the Nerual net from the Neural Net Lib.
+-- i.e. NeuralNets.Active = NeuralNets.First
+NerualNets.Active =
