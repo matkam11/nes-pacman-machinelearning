@@ -21,12 +21,23 @@ function Fileops.write_full_game(data,filename)
     end
     file:close()
 
-    local file = io.open(Interface.path .. "labels_" .. filename, "w")
+    local file = io.open(Interface.datapath .. "labels_" .. filename, "w")
     lenOfData = table.getn(data)
     for f = 1,lenOfData do
-    	currLabel = data[f]['labels']
-    	file:write(tostring(currLabel["P1 A"]) .. " " .. tostring(currLabel["P1 B"]) .. " " .. tostring(currLabel["P1 Down"]) .. " " .. tostring(currLabel["P1 Left"]) .. " " .. tostring(currLabel["P1 Right"]) .. " " .. tostring(currLabel["P1 Up"]))
-    	file:write("\n")
+        currLabel = data[f]['labels']
+        local output_value = "0"
+        if currLabel[Interface.ButtonNames[1]] then
+            output_value = "1"
+        end
+        file:write(tostring(output_value))
+        for button = 2,Interface.Outputs do
+            local output_value = "0"
+            if currLabel[Interface.ButtonNames[button]] then
+                output_value = "1"
+            end
+          file:write(" " .. tostring(output_value))
+        end
+      file:write("\n")
     end
     print(currLabel)
     file:close()
