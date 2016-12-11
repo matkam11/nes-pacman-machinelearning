@@ -44,70 +44,6 @@ function Fileops.write_full_game(data,filename)
 end
 
 -- ####################################################################
--- Pre load functions to parse the file
-
--- ####################################################################
--- this function loads a file line by line to avoid having memory issues
-function Fileops.load_file_to_tensor(path)
-
-  local input_table = {}
-
-  local file = io.open(path, 'r') -- open file
-  local max_line_size = 0
-  local line_number = 1
-  for line in file:lines() do
-    input_table[line_number] = {}
-    for input in line:gmatch("%w+") do
-      table.insert(input_table[line_number], input)
-    end
-    -- increment the number of lines counter
-    line_number = line_number +1
-  end
-  file:close() --close file
-  -- intialize tensor for the file
-  local file_tensor = torch.IntTensor(input_table)
-  return file_tensor
-end
-
--- ####################################################################
--- this function loads a file line by line to avoid having memory issues
-function Fileops.load_file_to_tensorNEW(path)
-  local input_table = {}
-
-  local file = io.open(path, 'r') -- open file
-  local max_line_size = 0
-  local line_number = 1
-  for line in file:lines() do
-    input_table[line_number] = {}
-
-    for input in line:gmatch("-?[0-9]+") do
-      table.insert(input_table[line_number], input)
-    end
-    -- increment the number of lines counter
-    line_number = line_number +1
-  end
-  file:close() --close file
-  -- intialize tensor for the file
-  local file_tensor = torch.DoubleTensor(input_table)
-  return file_tensor
-end
-
--- ####################################################################
-function Fileops.load_file_to_labels(path)
-
-  local input_table = {}
-  local file = io.open(path, 'r') -- open file
-  for line in file:lines() do
-    table.insert(input_table, get_int_from_bin(line))
-
-  end
-  file:close() --close file
-
-  -- intialize tensor for the file
-  local file_tensor = torch.IntTensor(input_table)
-  return input_table
-end
--- ####################################################################
 -- this function loads a file line by line to avoid having memory issues
 function Fileops.load_file_to_tensorMATRIX(path,slice,input_size)
   local input_table = {}
@@ -131,7 +67,7 @@ end
 
 -- ####################################################################
 -- this function Fileops.loads a file line by line to avoid having memory issues
-function Fileops.load_file_to_tensor_with_type(path,thetype)
+function Fileops.load_file_to_tensorWITHTYPE(path,thetype)
 
   local input_table = {}
 
@@ -140,7 +76,7 @@ function Fileops.load_file_to_tensor_with_type(path,thetype)
   local line_number = 1
   for line in file:lines() do
     input_table[line_number] = {}
-    for input in line:gmatch("%w+") do
+    for input in line:gmatch("-?[0-9]+") do
       table.insert(input_table[line_number], input)
     end
     -- increment the number of lines counter
@@ -184,7 +120,7 @@ function Fileops.load_file_to_labelsNEW(path)
 end
 
 -- ####################################################################
-function Fileops.load_file_to_labels_with_type(path,thetype)
+function Fileops.load_file_to_labels_WITHTYPE(path,thetype)
 
   local input_table = {}
   local file = io.open(path, 'r') -- open file
@@ -212,29 +148,6 @@ function Fileops.load_file_to_labels_with_type(path,thetype)
 end
 
 -- ####################################################################
-function Fileops.get_data_and_labels(dataPath,labelsPath)
-  mySet = {}
-  data=Fileops.load_file_to_tensor(dataPath)
-  labels=Fileops.load_file_to_labels(labelsPath)
-  mySet.data = data
-  mySet.label = labels
-
-  return mySet
-end
-
--- ####################################################################
-function Fileops.get_data_and_labelsNEW(dataPath,labelsPath)
-  mySet = {}
-  local data=Fileops.load_file_to_tensorNEW(dataPath)
-  function mySet:size() return (#data)[1] end
-  local labels=Fileops.load_file_to_labelsNEW(labelsPath)
-  for i=1, mySet:size() do
-    mySet[i] = {data[i], labels[i]}
-  end
-  return mySet
-end
-
--- ####################################################################
 function Fileops.get_data_and_labelsMATRIX(dataPath,labelsPath,slice,input_size)
   mySet = {}
   local data=Fileops.load_file_to_tensorMATRIX(dataPath,slice,input_size)
@@ -249,8 +162,8 @@ end
 -- ####################################################################
 function Fileops.get_data_and_labelsMULTILABEL(dataPath,labelsPath)
   mySet = {}
-  local data=Fileops.load_file_to_tensor_with_type(dataPath,"byte")
-  local labels=Fileops.load_file_to_labels_with_type(labelsPath, "byte")
+  local data=Fileops.load_file_to_tensorWITHTYPE(dataPath,"byte")
+  local labels=Fileops.load_file_to_labels_WITHTYPE(labelsPath, "byte")
   mySet.data = data
   mySet.label = labels
   return mySet
