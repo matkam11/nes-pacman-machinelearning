@@ -92,13 +92,11 @@ function load_file_to_labelsNEW(path)
   local input_table = {}
   local file = io.open(path, 'r') -- open file
   for line in file:lines() do
-    --table.insert(input_table, tonumber(line:gsub(" " , ""),2))
-    local int_table = {}
-    table.insert(int_table, get_int_from_bin(line))
-    --table.insert(input_table, torch.DoubleTensor(line:gmatch("%S")))
-    input_table[number_of_lines] = tonumber(line:gsub(" " , ""),2)
-    --for input in line:gmatch("%w+") do table.insert(input_table[number_of_lines], input) end
-
+      local int_table = {}
+      print(line)
+      line:gsub(".",function(c) table.insert(int_table,tonumber(c)) end)
+      print(int_table)
+      table.insert(input_table, torch.DoubleTensor(int_table))
   end
   file:close() --close file
     
@@ -199,7 +197,7 @@ dataset={}
 dataset = get_data_and_labelsNEW(dataPath,labelsPath)
 
 mlp = nn.Sequential();  -- make a multi-layer perceptron
-inputs = 169; outputs = 1; HUs = 45; -- parameters
+inputs = 169; outputs = 6; HUs = 45; -- parameters
 mlp:add(nn.Linear(inputs, HUs))
 mlp:add(nn.Tanh())
 mlp:add(nn.Linear(HUs, outputs))
