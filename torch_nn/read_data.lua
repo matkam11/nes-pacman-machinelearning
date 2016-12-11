@@ -95,8 +95,9 @@ function load_file_to_labelsNEW(path)
     --table.insert(input_table, tonumber(line:gsub(" " , ""),2))
     local int_table = {}
     table.insert(int_table, get_int_from_bin(line))
+    table.insert(input_table, torch.DoubleTensor(int_table))
     --table.insert(input_table, torch.DoubleTensor(line:gmatch("%S")))
-    input_table[number_of_lines] = tonumber(line:gsub(" " , ""),2)
+   -- input_table[number_of_lines] = tonumber(line:gsub(" " , ""),2)
     --for input in line:gmatch("%w+") do table.insert(input_table[number_of_lines], input) end
 
   end
