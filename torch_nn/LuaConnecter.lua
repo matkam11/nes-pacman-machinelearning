@@ -60,11 +60,11 @@ function getTile(dx, dy)
 	local subx = math.floor((x%256)/16)
 	local suby = math.floor((y - 32)/16)
 	local addr = 0x500 + page*13*16+suby*16+subx
-	
+
 	if suby >= 13 or suby < 0 then
 		return 0
 	end
-	
+
 	if memory.readbyte(addr) ~= 0 then
 		return 1
 	else
@@ -82,25 +82,25 @@ function getSprites()
 			sprites[#sprites+1] = {["x"]=ex,["y"]=ey}
 		end
 	end
-	
+
 	return sprites
 end
 
 function getInputs()
 	getPositions()
-	
-	sprites = getSprites()	
+
+	sprites = getSprites()
 	local inputs = {}
-	
+
 	for dy=-BoxRadius*16,BoxRadius*16,16 do
 		for dx=-BoxRadius*16,BoxRadius*16,16 do
 			inputs[#inputs+1] = 0
-			
+
 			tile = getTile(dx, dy)
 			if tile == 1 and marioY+dy < 0x1B0 then
 				inputs[#inputs] = 1
 			end
-			
+
 			for i = 1,#sprites do
 				distx = math.abs(sprites[i]["x"] - (marioX+dx))
 				disty = math.abs(sprites[i]["y"] - (marioY+dy))
@@ -122,7 +122,7 @@ function getInputs()
 	-- end
 	--mariovx = memory.read_s8(0x7B)
 	--mariovy = memory.read_s8(0x7D)
-	
+
 	return inputs
 end
 
@@ -209,7 +209,7 @@ function displayGenome(genome)
 	biasCell.y = 110
 	biasCell.value = network.neurons[Inputs].value
 	cells[Inputs] = biasCell
-	controller = joypad.get(1)	
+	controller = joypad.get(1)
 	for o = 1,Outputs do
 		cell = {}
 		cell.x = 220
@@ -232,8 +232,8 @@ function displayGenome(genome)
 			--printline(cell.value)
 			local color = math.floor((cell.value+1)/2*256)
 			if cell.value ~= 0 and color == 0 then status = 2 end
-			if color > 255 then 
-				color = 100 
+			if color > 255 then
+				color = 100
 				status = 1
 			end -- Ground Tiles
 			if color < 0 then color = 0 end
@@ -287,19 +287,19 @@ function loadFile(filename)
 				else
 					gene.enabled = true
 				end
-				
+
 			end
 		end
 	end
         file:close()
-	
+
 	while fitnessAlreadyMeasured() do
 		nextGenome()
 	end
 	initializeRun()
 	pool.currentFrame = pool.currentFrame + 1
 end
- 
+
 
 function playTop()
 	local maxfitness = 0
@@ -313,7 +313,7 @@ function playTop()
 			end
 		end
 	end
-	
+
 	pool.currentSpecies = maxs
 	pool.currentGenome = maxg
 	pool.maxFitness = maxfitness
@@ -383,6 +383,7 @@ function key_table_to_table(input_key_table,thershold)
 			key_table[button_names[i]] = false
 		end
 	end
+	key_table[button_names[5]] = true
 	return key_table
 end
 
