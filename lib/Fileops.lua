@@ -1,5 +1,5 @@
 local Fileops = {}
-Interface.path  = "/home/matkam11/School/nes-pacman-machinelearning/"
+Interface.path  = "/home/agostini/Development/sness/nes-pacman-machinelearning/"
 Interface.datapath = Interface.path .. "Data/"
 function Fileops.write_current_state(data,filename)
     local file = io.open(Interface.datapath .. filename, "w")
