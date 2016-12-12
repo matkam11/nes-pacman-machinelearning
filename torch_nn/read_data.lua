@@ -17,7 +17,7 @@ active_nn.net_def:zeroGradParameters() -- zero the internal gradient buffers of 
 
 criterion = nn.ClassNLLCriterion()
 trainer = nn.StochasticGradient(active_nn.net_def, criterion)
-trainer.learningRate = 0.0001
+trainer.learningRate = 0.001
 trainer.maxIteration = 5 -- just do 5 epochs of training.
 
 -- Load the data
