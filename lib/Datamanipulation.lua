@@ -1,6 +1,40 @@
 
 local Datamanipulation = {}
 -- ####################################################################
+function Datamanipulation.getResizedMatrixUnit(inputTensorLine, slice)
+
+  local reshaped_file_tensor = {}
+  local resized_tensor = {}
+    reshaped_file_tensor = torch.DoubleTensor(13,13):copy(inputTensorLine)
+    resized_tensor = reshaped_file_tensor[slice]
+
+  return torch.Tensor(resized_tensor)
+end
+
+-- ####################################################################
+function Datamanipulation.getResizedResMatrix(inputTensor,slice)
+  local vectorTensor = {}
+
+  for i=1,(#inputTensor)[1] do
+    vectorTensor[i] = Datamanipulation.getResizedMatrixUnit(inputTensor[i],slice)
+  end
+  return vectorTensor
+end
+
+function TableToTensor(table)
+  local tensorSize = table[1]:size()
+  local tensorSizeTable = {-1}
+  for i=1,tensorSize:size(1) do
+    tensorSizeTable[i+1] = tensorSize[i]
+  end
+  merge=nn.Sequential()
+    :add(nn.JoinTable(1))
+    :add(nn.View(unpack(tensorSizeTable)))
+
+  return merge:forward(table)
+end
+
+-- ####################################################################
 function Datamanipulation.getResizedVectorLine(inputTensorLine, slice, input_size)
   local reshaped_file_tensor = {}
   local resized_tensor = {}

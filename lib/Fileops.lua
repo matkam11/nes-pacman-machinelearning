@@ -66,6 +66,28 @@ function Fileops.load_file_to_tensorMATRIX(path,slice,input_size)
 end
 
 -- ####################################################################
+-- this function loads a file line by line to avoid having memory issues
+function Fileops.load_file_to_tensorResMATRIX(path,slice)
+  local input_table = {}
+  local file = io.open(path, 'r') -- open file
+  local max_line_size = 0
+  local line_number = 1
+  for line in file:lines() do
+    input_table[line_number] = {}
+
+    for input in line:gmatch("-?[0-9]+") do
+      table.insert(input_table[line_number], input)
+    end
+    -- increment the number of lines counter
+    line_number = line_number +1
+  end
+  file:close() --close file
+  -- intialize tensor for the file
+  local file_tensor = torch.DoubleTensor(input_table)
+  return Datamanipulation.getResizedResMatrix(file_tensor,slice)
+end
+
+-- ####################################################################
 -- this function Fileops.loads a file line by line to avoid having memory issues
 function Fileops.load_file_to_tensorWITHTYPE(path,thetype)
 
@@ -151,6 +173,18 @@ end
 function Fileops.get_data_and_labelsMATRIX(dataPath,labelsPath,slice,input_size)
   mySet = {}
   local data=Fileops.load_file_to_tensorMATRIX(dataPath,slice,input_size)
+  function mySet:size() return (#data) end
+  local labels=Fileops.load_file_to_labelsNEW(labelsPath)
+  for i=1, mySet:size() do
+    mySet[i] = {data[i], labels[i]}
+  end
+  return mySet
+end
+
+-- ####################################################################
+function Fileops.get_data_and_labelsResMATRIX(dataPath,labelsPath,slice)
+  mySet = {}
+  local data=Fileops.load_file_to_tensorResMATRIX(dataPath,slice)
   function mySet:size() return (#data) end
   local labels=Fileops.load_file_to_labelsNEW(labelsPath)
   for i=1, mySet:size() do
