@@ -46,21 +46,27 @@ while true do
     end
 
     --prediction = net:forward(Datamanipulation.getResizedVectorLine(torch.DoubleTensor(displayBoard()['frame']),active_nn.meta.input_slice,active_nn.meta.inputs))
-    prediction = net:forward(input)
-    local confidences, indices = torch.sort(prediction, true)
+
+		print("================================================================")
+		local thres = -3.5560620383429
+		prediction = net:forward(input)
+    if prediction[3]>(thres) then
+			print(" INPUT: ".. prediction[3] .. " " ..
+				"\n\tTHERS " .. thres.." T")
+			prediction[3] = 1
+			print("HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+		else
+			print(" INPUT: ".. prediction[3] .. " " ..
+				"\n\tTHERS " .. thres.." F")
+    end
+		print("prediction")
+		print(prediction)
+
+		local confidences, indices = torch.sort(prediction, true)
     --Interface.press_keys(Interface.key_table_to_table_t_table(prediction,active_nn.meta.thershold))
     local inputTable = {}
     inputTable = Datamanipulation.getArrayFromLabelNumber(indices[1])
 
-		print("================================================================")
-		print("Indices")
-    print(indices)
-
-		print("Confidences")
-		print(confidences)
-
-		print("Input table")
-    print(inputTable)
     Interface.press_keys(Interface.key_tensor_to_table_t_table(inputTable))
     old_fitness = fitness
     fitness = Mario.curr_fitness()
