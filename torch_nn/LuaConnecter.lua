@@ -48,7 +48,7 @@ while true do
     --prediction = net:forward(Datamanipulation.getResizedVectorLine(torch.DoubleTensor(displayBoard()['frame']),active_nn.meta.input_slice,active_nn.meta.inputs))
 
 		print("================================================================")
-		local thres = -3.1379417216077
+		local thres = -3.1632307624464
 		prediction = net:forward(input)
     if prediction[3]>(thres) then
 			print(" INPUT: ".. prediction[3] .. " " ..

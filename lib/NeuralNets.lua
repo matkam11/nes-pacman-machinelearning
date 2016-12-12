@@ -181,10 +181,10 @@ NeuralNet_Def.net_def:add(nn.LogSoftMax())
 NeuralNets.Nico2 = NeuralNet_Def
 
 -- #####################################################################
--- Jumps in the whole
+-- Jumps over the holes and turtles but dies in 2008
 -- Has to reset input number 3 with
 --
--- local thres = -3.1379417216077
+-- local thres = 		--local thres = -3.1632307624464
 -- prediction = net:forward(input)
 --if prediction[3]>(thres) then
 --  print(" INPUT: ".. prediction[3] .. " " ..
