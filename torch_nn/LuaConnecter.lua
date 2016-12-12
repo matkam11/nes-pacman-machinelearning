@@ -32,23 +32,36 @@ while true do
     playerStatus = memory.readbyte(0x000E)
     --prediction = net:forward(torch.DoubleTensor(displayBoard()['frame']))
 
-
-		local temp = Datamanipulation.getResizedMatrixUnit(
-				torch.DoubleTensor(displayBoard()['frame'])
-				,active_nn.meta.input_slice)
+    local temp = Datamanipulation.getResizedMatrixUnit(
+      torch.DoubleTensor(displayBoard()['frame'])
+      ,active_nn.meta.input_slice)
     local input =torch.DoubleTensor(1,13,13)
     for j=1,1 do
       for k=1,13 do
         for z=1,13 do
           input[j][k][z]=temp[k][z]
+
         end
       end
     end
 
     --prediction = net:forward(Datamanipulation.getResizedVectorLine(torch.DoubleTensor(displayBoard()['frame']),active_nn.meta.input_slice,active_nn.meta.inputs))
-		prediction = net:forward(input:add(-0.18558070650102))
+    prediction = net:forward(input)
+    local confidences, indices = torch.sort(prediction, true)
+    --Interface.press_keys(Interface.key_table_to_table_t_table(prediction,active_nn.meta.thershold))
+    local inputTable = {}
+    inputTable = Datamanipulation.getArrayFromLabelNumber(indices[1])
 
-		Interface.press_keys(Interface.key_table_to_table_t_table(prediction,active_nn.meta.thershold))
+		print("================================================================")
+		print("Indices")
+    print(indices)
+
+		print("Confidences")
+		print(confidences)
+
+		print("Input table")
+    print(inputTable)
+    Interface.press_keys(Interface.key_tensor_to_table_t_table(inputTable))
     old_fitness = fitness
     fitness = Mario.curr_fitness()
     if old_fitness == fitness then

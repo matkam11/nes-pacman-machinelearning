@@ -85,6 +85,19 @@ function Interface.key_table_to_table(input_key_table,thershold)
 	return key_table
 end
 
+function Interface.key_tensor_to_table_t_table(input_key_table)
+	key_table = {}
+	for i = 1,6 do
+ 	 if input_key_table[i]==1 then
+ 		 key_table[Interface.ButtonNames[i]] = true
+ 	 else
+ 		 key_table[Interface.ButtonNames[i]] = false
+ 	 end
+  end
+	return key_table
+end
+
+
 function Interface.key_table_to_table_t_table(input_key_table,thershold)
 	key_table = {}
 --i=1

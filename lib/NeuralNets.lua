@@ -47,7 +47,7 @@ NeuralNet_Def.meta = {}
 
 local inputs = 169
 local input_slice = {{1,13},{1,13}}
-local outputs = 6
+local outputs = 5
 local HUs = 2
 NeuralNet_Def.meta.inputs = inputs
 NeuralNet_Def.meta.input_slice = input_slice
@@ -70,15 +70,18 @@ NeuralNet_Def.net_def:add(nn.SpatialConvolution(1, 6, 3, 3))
 NeuralNet_Def.net_def:add(nn.ReLU())                       -- non-linearity
 NeuralNet_Def.net_def:add(nn.SpatialMaxPooling(2,2,2,2))
 -- reshapes from a 3D tensor of 16x5x5 into 1D tensor of 16*5*5
-NeuralNet_Def.net_def:add(nn.View(6*5*5))
-NeuralNet_Def.net_def:add(nn.Linear(6*5*5, 25))
-NeuralNet_Def.net_def:add(nn.Sigmoid())
-NeuralNet_Def.net_def:add(nn.Linear(25, 25))
-NeuralNet_Def.net_def:add(nn.Sigmoid())
-NeuralNet_Def.net_def:add(nn.Linear(25, 10))
-NeuralNet_Def.net_def:add(nn.Sigmoid())
+NeuralNet_Def.net_def:add(nn.SpatialConvolution(6, 16, 2, 2))
+NeuralNet_Def.net_def:add(nn.ReLU())                       -- non-linearity
+NeuralNet_Def.net_def:add(nn.SpatialMaxPooling(2,2,2,2))
+NeuralNet_Def.net_def:add(nn.View(16*2*2))
+NeuralNet_Def.net_def:add(nn.Linear(16*2*2, 120))
+NeuralNet_Def.net_def:add(nn.ReLU())
+NeuralNet_Def.net_def:add(nn.Linear(120, 84))
+NeuralNet_Def.net_def:add(nn.ReLU())
+NeuralNet_Def.net_def:add(nn.Linear(84, 10))
+NeuralNet_Def.net_def:add(nn.ReLU())
 NeuralNet_Def.net_def:add(nn.Linear(10, outputs))
-NeuralNet_Def.net_def:add(nn.Sigmoid())
+NeuralNet_Def.net_def:add(nn.LogSoftMax())
 
 NeuralNets.Nico = NeuralNet_Def
 

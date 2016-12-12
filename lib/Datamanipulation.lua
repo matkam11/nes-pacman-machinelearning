@@ -61,4 +61,47 @@ function Datamanipulation.get_int_from_bin(line)
   return number
 end
 
+
+function Datamanipulation.getArrayFromLabelNumber(aNumber)
+	local aArray = torch.Tensor(6)
+	if aNumber==4 then
+		aArray[1]=1
+		aArray[2]=1
+		aArray[3]=0
+		aArray[4]=0
+		aArray[5]=0
+		aArray[6]=1
+	elseif aNumber ==3 then
+		aArray[1]=1
+		aArray[2]=0
+		aArray[3]=0
+		aArray[4]=0
+		aArray[5]=0
+		aArray[6]=1
+	elseif aNumber ==2 then
+		aArray[1]=0
+		aArray[2]=1
+		aArray[3]=0
+		aArray[4]=0
+		aArray[5]=0
+		aArray[6]=1
+	elseif aNumber ==1 then
+		aArray[1]=0
+		aArray[2]=0
+		aArray[3]=0
+		aArray[4]=0
+		aArray[5]=0
+		aArray[6]=1
+	else
+		aArray[1]=0
+		aArray[2]=0
+		aArray[3]=0
+		aArray[4]=0
+		aArray[5]=0
+		aArray[6]=1
+	end
+	return aArray
+end
+
+
 return Datamanipulation
