@@ -21,7 +21,7 @@ trainer.learningRate = 0.0001
 trainer.maxIteration = 5 -- just do 5 epochs of training.
 
 -- Load the data
-for zz=1,10 do
+--for zz=1,10 do
   -- body...
 for i=0,3 do
 dataPath = Interface.datapath .. "data_"..i..".txt"
@@ -122,4 +122,4 @@ setmetatable(trainset,
     trainer:train(trainset)
     torch.save(active_nn.meta.output_file, active_nn.net_def)
   end
-end
+--end
