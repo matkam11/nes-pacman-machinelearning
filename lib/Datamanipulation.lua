@@ -102,20 +102,37 @@ end
 
 function Datamanipulation.datasetAdjust(dataset, manipulationType)
 
+  --##################################################
   if manipulationType=="Three Labels" then
     local thelabels={}
     for i=1,#dataset do
       -- thelabels should be a matrix [datasetsize X numberoflabels]
       thelabels[i] = Datamanipulation.getThreeLabelFromArray(dataset[i])
     end
-    print(#dataset[2][2])
-    print(#thelabels[2])
 
     for i=1,#dataset do
       -- thelabels should be a matrix [datasetsize X numberoflabels]
       dataset[i][2]={}
       dataset[i][2] = thelabels[i]
+
     end
+
+    --##################################################
+  elseif manipulationType=="MultiLabelMarginCriterion" then
+    local numberoflabels = (#dataset[1][2])[1]
+    local thelabels={}
+    local x = torch.Tensor(numberoflabels)
+
+    for i = 1, numberoflabels do
+      x[i]=i
+    end
+
+    for i=1,#dataset do
+      -- thelabels should be a matrix [datasetsize X numberoflabels]
+      dataset[i][2]:cmul(x)
+    end
+
+    --##################################################
   else
     -- Chain other if elseif
     -- leave the lest else blank so in case of fail it the same dataset

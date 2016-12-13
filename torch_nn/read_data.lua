@@ -16,14 +16,14 @@ active_nn.net_def:zeroGradParameters() -- zero the internal gradient buffers of 
 -- (will come to this later)
 
 --criterion = nn.MSECriterion()
-criterion = nn.MSECriterion()
+criterion = nn.MultiLabelMarginCriterion()
 trainer = nn.StochasticGradient(active_nn.net_def, criterion)
 trainer.learningRate = 0.00001
 trainer.maxIteration = 2 -- just do 5 epochs of training.
 
 -- Load the data
-for i = 1,2 do
-  for i = 1, 10 do
+for j = 1,2 do -- N TIMES WITH THE SAME dataset
+for i = 1, 50 do
     dataPath = Interface.datapath .. "data_"..i..".txt"
     labelsPath = Interface.datapath .. "labels_"..i..".txt"
     dataset={}
@@ -32,7 +32,7 @@ for i = 1,2 do
       active_nn.meta.inputs)
 
     -- Pass a random string and no manipulation will be done
-    dataset = Datamanipulation.datasetAdjust(dataset,"Three Labels")
+    dataset = Datamanipulation.datasetAdjust(dataset,"MultiLabelMarginCriterion")
 
     trainer:train(dataset)
   end
