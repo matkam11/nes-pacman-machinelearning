@@ -3,7 +3,6 @@ torch = require "torch"
 ffi = require 'ffi'
 nn = require "nn"
 
-
 Interface = require('Interface')
 Fileops = require('Fileops')
 NeuralNets = require('NeuralNets')
@@ -24,12 +23,20 @@ trainer.maxIteration = 2 -- just do 5 epochs of training.
 
 -- Load the data
 for i = 1,2 do
-for i = 1, 64 do
-  dataPath = Interface.datapath .. "data_"..i..".txt"
-  labelsPath = Interface.datapath .. "labels_"..i..".txt"
-  dataset={}
-  dataset = Fileops.get_data_and_labelsMATRIX(dataPath,labelsPath,active_nn.meta.input_slice, active_nn.meta.inputs)
-  trainer:train(dataset)
+  for i = 1, 10 do
+    dataPath = Interface.datapath .. "data_"..i..".txt"
+    labelsPath = Interface.datapath .. "labels_"..i..".txt"
+    dataset={}
+    dataset = Fileops.get_data_and_labelsMATRIX(dataPath,
+      labelsPath,active_nn.meta.input_slice,
+      active_nn.meta.inputs)
+
+    -- Pass a random string and no manipulation will be done
+    dataset = Datamanipulation.datasetAdjust(dataset,"Three Labels")
+
+    trainer:train(dataset)
+  end
+
 end
-end
+
 torch.save(active_nn.meta.output_file, active_nn.net_def)

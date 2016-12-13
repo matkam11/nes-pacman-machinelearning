@@ -85,6 +85,24 @@ function Interface.key_table_to_table(input_key_table,threshold)
 	return key_table
 end
 
+-- To use this function buttons  must change on NN file
+function Interface.key_table_to_table_t_table_with_buttons(input_key_table,threshold,buttons)
+	key_table = {}
+
+	for i = 1,#buttons do
+		if input_key_table[i] > threshold[i] then
+			key_table[buttons[i]] = true
+			print(" INPUT: ".. input_key_table[i] .. " "
+				.. buttons[i] .. "\n\tTHERS " .. threshold[i].." T")
+		else
+			key_table[buttons[i]] = false
+			print("INPUT: ".. input_key_table[i] .. " "
+				.. buttons[i]  .."\n\tTHERS " .. threshold[i].." F")
+		end
+	end
+	return key_table
+end
+
 function Interface.key_table_to_table_t_table(input_key_table,threshold)
 	key_table = {}
 --i=1
