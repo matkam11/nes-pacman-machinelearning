@@ -20,13 +20,18 @@ displayBoard = Interface.displayBoard
 totalGameState = {}
 run = 0
 Interface.initializeRun(smb_savestate)
+bestFitess = 0
+bestThreshold = active_nn.meta.threshold[1]
 while true do
 	Interface.initializeRun(smb_savestate)
 	fitness = curr_fitness
 	no_move = 0
 	myframe = 0
 	reset_count = 0
+	active_nn.meta.threshold[1] = active_nn.meta.threshold[1] - .001
 	while true do
+		gui.drawtext(1, 100, 'CT: ' .. active_nn.meta.threshold[1], 'white')
+		gui.drawtext(1, 108, 'Best: ' .. bestFitess .. '@' .. bestThreshold, 'white')
 		print('\n\n')
 	    displayBoard()
 		playerStatus = memory.readbyte(0x000E)
@@ -37,11 +42,14 @@ while true do
 							,active_nn.meta.input_slice
 							,active_nn.meta.inputs)
 						)
-		Interface.press_keys(Interface.key_table_to_table_t_table(prediction,active_nn.meta.thershold))
+		Interface.press_keys(Interface.key_table_to_table_t_table(prediction,active_nn.meta.threshold))
 		old_fitness = fitness
 		fitness = Mario.curr_fitness()
 		if old_fitness == fitness then
 			no_move = no_move + 1
+		else
+			no_move = 0
+			reset_count = 0
 		end
 
 		if no_move > 100 then
@@ -62,5 +70,9 @@ while true do
 		end
 		emu.frameadvance()
 		myframe  = myframe  +1
+	end
+	if fitness > bestFitess then
+		bestFitess = fitness
+		bestThreshold = active_nn.meta.threshold[1]
 	end
 end
