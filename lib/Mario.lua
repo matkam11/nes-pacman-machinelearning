@@ -93,9 +93,9 @@ function Mario.curr_fitness()
 	gui.drawtext(223, 80, xpos, color)
 	score = score + xpos
 	playerStatus = memory.readbyte(0x000E)
-	if playerStatus == 11 or playerStatus == 4  then
-		score = score - 1000
-	end
+	-- if playerStatus == 11 or playerStatus == 4  then
+	-- 	score = score - 1000
+	-- end
 	return score
 end
 

@@ -65,7 +65,7 @@ function Interface.displayBoard()
 	return gameState
 end
 
-function Interface.key_table_to_table(input_key_table,thershold)
+function Interface.key_table_to_table(input_key_table,threshold)
 	key_table = {}
 	local button_names = {
 		"A",
@@ -76,7 +76,7 @@ function Interface.key_table_to_table(input_key_table,thershold)
 		"up"
 	}
 	for i = 1,6 do
-		if input_key_table[i] > thershold then
+		if input_key_table[i] > threshold then
 			key_table[button_names[i]] = true
 		else
 			key_table[button_names[i]] = false
@@ -85,28 +85,28 @@ function Interface.key_table_to_table(input_key_table,thershold)
 	return key_table
 end
 
-function Interface.key_table_to_table_t_table(input_key_table,thershold)
+function Interface.key_table_to_table_t_table(input_key_table,threshold)
 	key_table = {}
 --i=1
---if input_key_table[i] < thershold[i] then
+--if input_key_table[i] < threshold[i] then
 --	key_table[Interface.ButtonNames[i]] = true
 --	print(" INPUT: ".. input_key_table[i] .. " "
---		.. Interface.ButtonNames[i] .. "\n\tTHERS " .. thershold[i].." T")
+--		.. Interface.ButtonNames[i] .. "\n\tTHERS " .. threshold[i].." T")
 --else
 --	key_table[Interface.ButtonNames[i]] = false
 --	print("INPUT: ".. input_key_table[i] .. " "
---		.. Interface.ButtonNames[i]  .."\n\tTHERS " .. thershold[i].." F")
+--		.. Interface.ButtonNames[i]  .."\n\tTHERS " .. threshold[i].." F")
 --end
 
 	for i = 1,6 do
-		if input_key_table[i] > thershold[i] then
+		if input_key_table[i] > threshold[i] then
 			key_table[Interface.ButtonNames[i]] = true
 			print(" INPUT: ".. input_key_table[i] .. " "
-				.. Interface.ButtonNames[i] .. "\n\tTHERS " .. thershold[i].." T")
+				.. Interface.ButtonNames[i] .. "\n\tTHERS " .. threshold[i].." T")
 		else
 			key_table[Interface.ButtonNames[i]] = false
 			print("INPUT: ".. input_key_table[i] .. " "
-				.. Interface.ButtonNames[i]  .."\n\tTHERS " .. thershold[i].." F")
+				.. Interface.ButtonNames[i]  .."\n\tTHERS " .. threshold[i].." F")
 		end
 	end
 	return key_table

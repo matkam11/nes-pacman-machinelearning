@@ -98,7 +98,7 @@ function Fileops.load_file_to_labels(path)
   local input_table = {}
   local file = io.open(path, 'r') -- open file
   for line in file:lines() do
-    table.insert(input_table, get_int_from_bin(line))
+    table.insert(input_table, Datamanipulation.get_int_from_bin(line))
 
   end
   file:close() --close file
@@ -172,7 +172,7 @@ function Fileops.load_file_to_labelsNEW(path)
     local int_table = {}
     line:gsub(".",function(c) table.insert(int_table,tonumber(c)) end)
     for i = 1,#int_table do
-      int_table[i] = (int_table[i]*i)
+      int_table[i] = (int_table[i])
     end
     table.insert(input_table, torch.DoubleTensor(int_table))
   end
@@ -189,7 +189,7 @@ function Fileops.load_file_to_labels_with_type(path,thetype)
   local input_table = {}
   local file = io.open(path, 'r') -- open file
   for line in file:lines() do
-    table.insert(input_table, get_int_from_bin(line))
+    table.insert(input_table, Datamanipulation.get_int_from_bin(line))
 
   end
   file:close() --close file
@@ -215,10 +215,15 @@ end
 function Fileops.get_data_and_labels(dataPath,labelsPath)
   mySet = {}
   data=Fileops.load_file_to_tensor(dataPath)
+  function mySet:size() return (2264) end
+  print(#data)
+  --print(#data[1])
   labels=Fileops.load_file_to_labels(labelsPath)
   mySet.data = data
   mySet.label = labels
-
+  for i=1, mySet:size() do
+    mySet[i] = {data[i], labels[i]}
+  end
   return mySet
 end
 
@@ -239,6 +244,7 @@ function Fileops.get_data_and_labelsMATRIX(dataPath,labelsPath,slice,input_size)
   mySet = {}
   local data=Fileops.load_file_to_tensorMATRIX(dataPath,slice,input_size)
   function mySet:size() return (#data) end
+  print(#data)
   local labels=Fileops.load_file_to_labelsNEW(labelsPath)
   for i=1, mySet:size() do
     mySet[i] = {data[i], labels[i]}
