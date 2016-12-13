@@ -41,16 +41,16 @@ function Interface.displayBoard()
     board = getInputs()
     for i = 1,169 do
 		local opacity = 0xFF000000
-		if board[i] == "0" then
+		if board[i] == 0 then
 		    opacity = 0x00000000
 		    color = 0
-		elseif board[i] == "1" then
+		elseif board[i] == 1 then
             color = 100
 		else
             color = 255
         end
         color = opacity + color*0x10000 + color*0x100 + color
-		gui.drawbox(x-2,y-2,x+2,y+2,opacity,color)
+		--gui.drawbox(x-2,y-2,x+2,y+2,opacity,color)
         if i % 13 == 0 then
         	x = 26
         	y = y + 4
@@ -58,7 +58,7 @@ function Interface.displayBoard()
         	x = x + 4
         end
     end
-    gui.drawbox(49,71,51,78,0x00000000,0x80FF0000)
+    gui.drawbox(49,71,51,78,0x000000FF,0xFFFF0000)
 	gameState = {}
 	gameState['labels'] = controller
 	gameState['frame'] = board
