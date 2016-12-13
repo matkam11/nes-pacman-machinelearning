@@ -3,7 +3,6 @@ torch = require "torch"
 ffi = require 'ffi'
 nn = require "nn"
 
-
 Interface = require('Interface')
 Fileops = require('Fileops')
 NeuralNets = require('NeuralNets')
@@ -17,14 +16,14 @@ active_nn.net_def:zeroGradParameters() -- zero the internal gradient buffers of 
 -- (will come to this later)
 
 --criterion = nn.MSECriterion()
-criterion = nn.MSECriterion()
+criterion = nn.MultiLabelMarginCriterion()
 trainer = nn.StochasticGradient(active_nn.net_def, criterion)
 trainer.learningRate = 0.0001
 trainer.maxIteration = 2 -- just do 5 epochs of training.
 
 -- Load the data
 for j = 1,1 do
-for i = 1, 117 do
+for i = 1, 139 do
   print(i .. " " .. j)
   dataPath = Interface.datapath .. "data_"..i..".txt"
   labelsPath = Interface.datapath .. "labels_"..i..".txt"
@@ -41,4 +40,5 @@ for i = 201, 209 do
   trainer:train(dataset)
 end
 end
+
 torch.save(active_nn.meta.output_file, active_nn.net_def)

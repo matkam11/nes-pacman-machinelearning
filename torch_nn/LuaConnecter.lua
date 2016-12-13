@@ -60,18 +60,17 @@ while true do
 			no_move = 0
 			reset_count = 0
 		end
+    if no_move > 100 then
 
-		if no_move > 100 then
-
-			Interface.clearJoypad()
-			no_move=0
-			reset_count = reset_count+1
-			if reset_count >3 then
-				no_move = 0
-				reset_count = 0
-				break
-			end
-		end
+      Interface.clearJoypad()
+      no_move=0
+      reset_count = reset_count+1
+      if reset_count >3 then
+        no_move = 0
+        reset_count = 0
+        break
+      end
+    end
 
 		if playerStatus == 11 or playerStatus == 4 or lives < 2 then
 	    	run = run + 1
