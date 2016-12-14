@@ -123,13 +123,17 @@ function Datamanipulation.datasetAdjust(dataset, manipulationType)
     local thelabels={}
     local x = torch.Tensor(numberoflabels)
 
-    for i = 1, numberoflabels do
-      x[i]=i
-    end
-
     for i=1,#dataset do
-      -- thelabels should be a matrix [datasetsize X numberoflabels]
-      dataset[i][2]:cmul(x)
+      local temp_labels = {}
+      for j = 1, numberoflabels do
+        if dataset[i][2][j] == 1 then
+          table.insert(temp_labels, dataset[i][2][j]*j)
+        end
+      end
+      while #temp_labels < 6 do
+        table.insert(temp_labels, 0)
+      end
+      dataset[i][2] = torch.Tensor(temp_labels)
     end
 
     --##################################################

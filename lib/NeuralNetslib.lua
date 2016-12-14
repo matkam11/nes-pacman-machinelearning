@@ -86,7 +86,6 @@ function NeuralNetslib.visualize(active_nn, threshold)
 					else
 						graph[i][j]["color"] = "0xFF000000"
 					end
-					color_step = 0xFFFFFFFF
 					-- print(tonumber(active_nn.net_def.modules[i].weight[j][k]))
 					-- print(graph[i-1][k]["value"])
 					graph[i][j]["value"] = graph[i][j]["value"] + graph[i-1][k]["value"]*tonumber(active_nn.net_def.modules[i].weight[j][k])
@@ -100,7 +99,7 @@ function NeuralNetslib.visualize(active_nn, threshold)
 					-- print((0xFF*math.abs(graph[i-1][k]["value"])))
 					-- print("k = "  .. k .. "," .. #graph[i-1])
 					-- print(graph[i-1][k]["color"])
-					gui.drawline(graph[i-1][k]["x"], graph[i-1][k]["y"], x, y, (color_step*math.abs(graph[i-1][k]["value"])*math.abs(tonumber(active_nn.net_def.modules[i].weight[j][k]))))
+					gui.drawline(graph[i-1][k]["x"], graph[i-1][k]["y"], x, y, graph[i-1][k]["color"] + bit.band(0xFF,(0x7F*math.abs(graph[i-1][k]["value"])*math.abs(tonumber(active_nn.net_def.modules[i].weight[j][k])))))
 				end
 			end
 			y = y + (2*y_shift)
